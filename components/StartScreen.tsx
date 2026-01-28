@@ -522,6 +522,10 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
 
                 {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
 
+                {settings.model === 'gemini-3-pro-image-preview' && (
+                    <p className="text-xs text-gray-500">{t('start.generate_pro_slow_hint')}</p>
+                )}
+
                 <button 
                     onClick={handleGenerateClick}
                     disabled={isGenerating || !generationPrompt.trim()}

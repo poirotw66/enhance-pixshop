@@ -42,9 +42,15 @@ const handleApiResponse = (
     }
 
     // 2. Try to find the image part
-    // The image might be in different locations depending on the model and response structure, 
+    // The image might be in different locations depending on the model and response structure,
     // but typically it's in candidates[0].content.parts
-    const imagePartFromResponse = response.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
+    // For 'generation' with Gemini 3 Pro (Thinking model): the model may return multiple
+    // inlineData parts (interim "thought" images). The LAST one is the final image.
+    const parts = response.candidates?.[0]?.content?.parts ?? [];
+    const withInline = parts.filter(p => p.inlineData);
+    const imagePartFromResponse = context === 'generation' && withInline.length > 0
+        ? withInline[withInline.length - 1]
+        : parts.find(part => part.inlineData);
 
     if (imagePartFromResponse?.inlineData) {
         const { mimeType, data } = imagePartFromResponse.inlineData;
@@ -338,14 +344,14 @@ export const generateImageFromText = async (
     const promises = Array.from({ length: numberOfImages }).map(async () => {
         const response: GenerateContentResponse = await ai.models.generateContent({
             model: model,
-            contents: {
-                parts: [{ text: prompt }]
-            },
+            contents: { parts: [{ text: prompt }] },
             config: {
+                responseModalities: ['TEXT', 'IMAGE'],
                 imageConfig: {
                     aspectRatio: aspectRatio,
-                }
-            }
+                    ...(model === 'gemini-3-pro-image-preview' ? { imageSize: '1K' as const } : {}),
+                },
+            },
         });
         return handleApiResponse(response, 'generation');
     });

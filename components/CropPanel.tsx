@@ -13,7 +13,7 @@ interface CropPanelProps {
   isCropping: boolean;
 }
 
-type AspectRatio = 'free' | '1:1' | '16:9';
+type AspectRatio = 'free' | '1:1' | '16:9' | 'id_2in_head' | 'id_2in_half' | 'id_1in';
 
 const CropPanel: React.FC<CropPanelProps> = ({ onApplyCrop, onSetAspect, isLoading, isCropping }) => {
   const { t } = useLanguage();
@@ -24,10 +24,13 @@ const CropPanel: React.FC<CropPanelProps> = ({ onApplyCrop, onSetAspect, isLoadi
     onSetAspect(value);
   }
 
-  const aspects: { name: AspectRatio, value: number | undefined, label: string }[] = [
+  const aspects: { name: AspectRatio, value: number | undefined, label: string, title?: string }[] = [
     { name: 'free', value: undefined, label: t('panel.crop.free') },
     { name: '1:1', value: 1 / 1, label: '1:1' },
     { name: '16:9', value: 16 / 9, label: '16:9' },
+    { name: 'id_2in_head', value: 3.5 / 4.5, label: t('panel.crop.id_2in_head'), title: t('panel.crop.id_2in_head_title') },
+    { name: 'id_2in_half', value: 4.2 / 4.7, label: t('panel.crop.id_2in_half'), title: t('panel.crop.id_2in_half_title') },
+    { name: 'id_1in', value: 2.8 / 3.5, label: t('panel.crop.id_1in'), title: t('panel.crop.id_1in_title') },
   ];
 
   return (
@@ -35,13 +38,14 @@ const CropPanel: React.FC<CropPanelProps> = ({ onApplyCrop, onSetAspect, isLoadi
       <h3 className="text-lg font-semibold text-gray-300">{t('panel.crop.title')}</h3>
       <p className="text-sm text-gray-400 -mt-2">{t('panel.crop.instr')}</p>
       
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium text-gray-400">{t('panel.crop.aspect')}</span>
-        {aspects.map(({ name, value, label }) => (
+        {aspects.map(({ name, value, label, title }) => (
           <button
             key={name}
             onClick={() => handleAspectChange(name, value)}
             disabled={isLoading}
+            title={title}
             className={`px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200 active:scale-95 disabled:opacity-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
               activeAspect === name 
               ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-md shadow-blue-500/20' 
