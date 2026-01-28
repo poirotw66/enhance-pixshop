@@ -3,47 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { UploadIcon, MagicWandIcon, PaletteIcon, SunIcon, BullseyeIcon, IdPhotoIcon } from './icons';
-import { generateImageFromText, generateIdPhoto } from '../services/geminiService';
+import React, { useState } from 'react';
+import { UploadIcon, MagicWandIcon, PaletteIcon, SunIcon, BullseyeIcon } from './icons';
+import { generateImageFromText } from '../services/geminiService';
+import { dataURLtoFile } from '../utils/fileUtils';
 import Spinner from './Spinner';
+import StartTabNav from './StartTabNav';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSettings } from '../contexts/SettingsContext';
-import {
-  ID_PHOTO_TYPES,
-  RETOUCH_LEVELS,
-  OUTPUT_SPECS,
-  CLOTHING_OPTIONS,
-  DEFAULT_ID_TYPE,
-  DEFAULT_RETOUCH_LEVEL,
-  DEFAULT_OUTPUT_SPEC,
-  DEFAULT_CLOTHING_OPTION,
-} from '../constants/idPhoto';
-import type { IdPhotoType, RetouchLevel, OutputSpec, ClothingOption } from '../constants/idPhoto';
 
-type StartTab = 'upload' | 'generate' | 'idphoto';
+type StartTab = 'upload' | 'generate';
 
 interface StartScreenProps {
   tab: StartTab;
   onImageSelected: (file: File) => void;
   navigate: (path: string) => void;
-}
-
-// Helper to convert a data URL string to a File object
-const dataURLtoFile = (dataurl: string, filename: string): File => {
-    const arr = dataurl.split(',');
-    if (arr.length < 2) throw new Error("Invalid data URL");
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch || !mimeMatch[1]) throw new Error("Could not parse MIME type from data URL");
-
-    const mime = mimeMatch[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, {type:mime});
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigate }) => {
@@ -56,40 +30,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigat
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
-
-  // ID photo state
-  const [idPhotoFile, setIdPhotoFile] = useState<File | null>(null);
-  const [idPhotoResult, setIdPhotoResult] = useState<string | null>(null);
-  const [idPhotoLoading, setIdPhotoLoading] = useState(false);
-  const [idPhotoError, setIdPhotoError] = useState<string | null>(null);
-  const [idPhotoPreviewUrl, setIdPhotoPreviewUrl] = useState<string | null>(null);
-  const [idPhotoType, setIdPhotoType] = useState<IdPhotoType>(DEFAULT_ID_TYPE);
-  const [idPhotoRetouchLevel, setIdPhotoRetouchLevel] = useState<RetouchLevel>(DEFAULT_RETOUCH_LEVEL);
-  const [idPhotoOutputSpec, setIdPhotoOutputSpec] = useState<OutputSpec>(DEFAULT_OUTPUT_SPEC);
-  const [idPhotoClothingOption, setIdPhotoClothingOption] = useState<ClothingOption>(DEFAULT_CLOTHING_OPTION);
-  const [idPhotoClothingCustomText, setIdPhotoClothingCustomText] = useState('');
-  const [idPhotoClothingReferenceFile, setIdPhotoClothingReferenceFile] = useState<File | null>(null);
-  const [idPhotoClothingReferenceUrl, setIdPhotoClothingReferenceUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (idPhotoFile) {
-      const u = URL.createObjectURL(idPhotoFile);
-      setIdPhotoPreviewUrl(u);
-      return () => URL.revokeObjectURL(u);
-    } else {
-      setIdPhotoPreviewUrl(null);
-    }
-  }, [idPhotoFile]);
-
-  useEffect(() => {
-    if (idPhotoClothingReferenceFile) {
-      const u = URL.createObjectURL(idPhotoClothingReferenceFile);
-      setIdPhotoClothingReferenceUrl(u);
-      return () => URL.revokeObjectURL(u);
-    } else {
-      setIdPhotoClothingReferenceUrl(null);
-    }
-  }, [idPhotoClothingReferenceFile]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -130,59 +70,11 @@ const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigat
       onImageSelected(newFile);
   };
 
-  const handleIdPhotoFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) {
-      setIdPhotoFile(f);
-      setIdPhotoResult(null);
-      setIdPhotoError(null);
-    }
-    e.target.value = '';
-  }, []);
-
-  const handleIdPhotoGenerate = useCallback(async () => {
-    if (!idPhotoFile) {
-      setIdPhotoError(t('start.error_no_image_idphoto'));
-      return;
-    }
-    if (idPhotoClothingOption === 'custom' && !idPhotoClothingCustomText.trim() && !idPhotoClothingReferenceFile) {
-      setIdPhotoError(t('idphoto.error_custom_clothing_empty'));
-      return;
-    }
-    setIdPhotoError(null);
-    setIdPhotoLoading(true);
-    try {
-      const url = await generateIdPhoto(idPhotoFile, {
-        retouchLevel: idPhotoRetouchLevel,
-        idType: idPhotoType,
-        outputSpec: idPhotoOutputSpec,
-        clothingOption: idPhotoClothingOption,
-        clothingCustomText: idPhotoClothingOption === 'custom' ? idPhotoClothingCustomText.trim() || undefined : undefined,
-        clothingReferenceImage: idPhotoClothingOption === 'custom' && idPhotoClothingReferenceFile ? idPhotoClothingReferenceFile : undefined,
-        settings: { apiKey: settings.apiKey, model: settings.model },
-      });
-      setIdPhotoResult(url);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'An unknown error occurred.';
-      setIdPhotoError(`${t('start.error_idphoto_failed')} ${msg}`);
-    } finally {
-      setIdPhotoLoading(false);
-    }
-  }, [idPhotoFile, idPhotoRetouchLevel, idPhotoType, idPhotoOutputSpec, idPhotoClothingOption, idPhotoClothingCustomText, idPhotoClothingReferenceFile, settings.apiKey, settings.model, t]);
-
-  const handleIdPhotoDownload = useCallback(() => {
-    if (!idPhotoResult) return;
-    const a = document.createElement('a');
-    a.href = idPhotoResult;
-    a.download = `id-photo-${Date.now()}.png`;
-    a.click();
-  }, [idPhotoResult]);
-
   return (
     <div 
-      className={`w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 ${isDraggingOver && (tab === 'upload' || tab === 'idphoto') ? 'bg-blue-500/10 border-dashed border-blue-400' : 'border-transparent'}`}
+      className={`w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 ${isDraggingOver && tab === 'upload' ? 'bg-blue-500/10 border-dashed border-blue-400' : 'border-transparent'}`}
       onDragOver={(e) => { 
-          if (tab === 'upload' || tab === 'idphoto') {
+          if (tab === 'upload') {
             e.preventDefault(); 
             setIsDraggingOver(true); 
           }
@@ -195,10 +87,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigat
         if (!file) return;
         if (tab === 'upload') {
           onImageSelected(file);
-        } else if (tab === 'idphoto') {
-          setIdPhotoFile(file);
-          setIdPhotoResult(null);
-          setIdPhotoError(null);
         }
       }}
     >
@@ -210,39 +98,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigat
           {t('start.subtitle')}
         </p>
 
-        {/* Tab Switcher */}
-        <div className="bg-gray-800/50 p-1 rounded-xl flex flex-wrap items-center justify-center gap-1 border border-gray-700 mt-4 mb-4">
-            <button
-                onClick={() => navigate('/')}
-                className={`px-6 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    tab === 'upload' 
-                    ? 'bg-gray-700 text-white shadow-lg' 
-                    : 'text-gray-400 hover:text-white hover:bg-white/10'
-                }`}
-            >
-                {t('start.tab_upload')}
-            </button>
-            <button
-                onClick={() => navigate('/generate')}
-                className={`px-6 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    tab === 'generate' 
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
-                    : 'text-gray-400 hover:text-white hover:bg-white/10'
-                }`}
-            >
-                {t('start.tab_generate')}
-            </button>
-            <button
-                onClick={() => navigate('/idphoto')}
-                className={`px-6 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    tab === 'idphoto' 
-                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' 
-                    : 'text-gray-400 hover:text-white hover:bg-white/10'
-                }`}
-            >
-                {t('start.tab_idphoto')}
-            </button>
-        </div>
+        <StartTabNav currentTab={tab} navigate={navigate} />
 
         {tab === 'upload' ? (
             <div className="flex flex-col items-center gap-4 w-full animate-fade-in">
@@ -255,192 +111,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigat
                     <p className="text-sm text-gray-400">{t('start.upload_drag')}</p>
                 </div>
             </div>
-        ) : tab === 'idphoto' ? (
-            idPhotoResult ? (
-              <div className="flex flex-col items-center gap-6 w-full max-w-2xl animate-fade-in bg-gray-800/40 p-6 rounded-xl border border-gray-700/50 backdrop-blur-sm">
-                <h3 className="text-xl font-bold text-white">{t('start.idphoto_title')}</h3>
-                <div className="w-full aspect-[3/4] max-h-[400px] rounded-lg overflow-hidden border border-gray-600 bg-white flex items-center justify-center">
-                  <img src={idPhotoResult} alt="ID photo" className="max-w-full max-h-full w-auto h-auto object-contain" />
-                </div>
-                <div className="w-full text-left">
-                  <h4 className="text-sm font-medium text-gray-400 mb-2">{t('idphoto.result.params_title')}</h4>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-300">
-                    <span><span className="text-gray-500">{t('idphoto.label.type')}:</span> {t(ID_PHOTO_TYPES.find(x => x.id === idPhotoType)?.nameKey ?? '')}</span>
-                    <span><span className="text-gray-500">{t('idphoto.label.level')}:</span> {t(RETOUCH_LEVELS.find(x => x.id === idPhotoRetouchLevel)?.nameKey ?? '')}</span>
-                    <span><span className="text-gray-500">{t('idphoto.label.spec')}:</span> {t(OUTPUT_SPECS.find(x => x.id === idPhotoOutputSpec)?.nameKey ?? '')}</span>
-                    <span><span className="text-gray-500">{t('idphoto.label.clothing')}:</span> {t(CLOTHING_OPTIONS.find(x => x.id === idPhotoClothingOption)?.nameKey ?? '')}</span>
-                    <span><span className="text-gray-500">{t('settings.model')}:</span> {settings.model === 'gemini-3-pro-image-preview' ? t('settings.model.pro') : t('settings.model.flash')}</span>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-3">
-                  <button
-                    onClick={handleIdPhotoDownload}
-                    className="bg-gradient-to-br from-green-600 to-green-500 text-white font-bold py-3 px-5 rounded-lg transition-all duration-200 shadow-lg shadow-green-500/20 hover:shadow-green-500/40 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    {t('start.idphoto_download')}
-                  </button>
-                  <button
-                    onClick={() => setIdPhotoResult(null)}
-                    className="bg-white/10 border border-white/20 text-gray-200 font-semibold py-3 px-5 rounded-lg transition-colors duration-200 hover:bg-white/20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    {t('start.idphoto_again')}
-                  </button>
-                  <button
-                    onClick={() => onImageSelected(dataURLtoFile(idPhotoResult, `id-photo-${Date.now()}.png`))}
-                    className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-5 rounded-lg transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    {t('start.idphoto_edit')}
-                  </button>
-                </div>
-              </div>
-            ) : idPhotoLoading ? (
-              <div className="flex flex-col items-center gap-4 w-full max-w-md animate-fade-in bg-gray-800/40 p-8 rounded-xl border border-gray-700/50 backdrop-blur-sm">
-                <Spinner />
-                <p className="text-gray-300">{t('start.idphoto_generating')}</p>
-              </div>
-            ) : (
-              <>
-                <div className="flex flex-col gap-4 w-full max-w-2xl animate-fade-in bg-gray-800/40 p-6 rounded-xl border border-gray-700/50 backdrop-blur-sm">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">{t('idphoto.label.type')}</label>
-                    <select
-                      value={idPhotoType}
-                      onChange={(e) => setIdPhotoType(e.target.value as IdPhotoType)}
-                      className="w-full bg-gray-900/50 border border-gray-600 rounded-lg p-2.5 text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    >
-                      {ID_PHOTO_TYPES.map((type) => (
-                        <option key={type.id} value={type.id}>{t(type.nameKey)}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">{t('idphoto.label.level')}</label>
-                    <div className="flex flex-wrap gap-2">
-                      {RETOUCH_LEVELS.map((level) => (
-                        <button
-                          key={level.id}
-                          onClick={() => setIdPhotoRetouchLevel(level.id)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                            idPhotoRetouchLevel === level.id
-                              ? 'bg-emerald-600 text-white border border-emerald-500'
-                              : 'bg-gray-800 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:border-gray-500'
-                          }`}
-                        >
-                          {t(level.nameKey)}
-                          {level.price != null && <span className="ml-1.5 opacity-80">({t('idphoto.price_hint')} ${level.price})</span>}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">{t('idphoto.label.spec')}</label>
-                    <div className="flex flex-wrap gap-2">
-                      {OUTPUT_SPECS.map((spec) => (
-                        <button
-                          key={spec.id}
-                          onClick={() => setIdPhotoOutputSpec(spec.id)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                            idPhotoOutputSpec === spec.id
-                              ? 'bg-emerald-600 text-white border border-emerald-500'
-                              : 'bg-gray-800 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:border-gray-500'
-                          }`}
-                        >
-                          {t(spec.nameKey)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">{t('idphoto.label.clothing')}</label>
-                    <select
-                      value={idPhotoClothingOption}
-                      onChange={(e) => setIdPhotoClothingOption(e.target.value as ClothingOption)}
-                      className="w-full bg-gray-900/50 border border-gray-600 rounded-lg p-2.5 text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    >
-                      {CLOTHING_OPTIONS.map((c) => (
-                        <option key={c.id} value={c.id}>{t(c.nameKey)}</option>
-                      ))}
-                    </select>
-                    {idPhotoClothingOption === 'custom' && (
-                      <div className="mt-2 space-y-2">
-                        <input
-                          type="text"
-                          value={idPhotoClothingCustomText}
-                          onChange={(e) => setIdPhotoClothingCustomText(e.target.value)}
-                          placeholder={t('idphoto.clothing.custom_placeholder')}
-                          className="w-full bg-gray-900/50 border border-gray-600 rounded-lg p-2.5 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                        />
-                        <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">{t('idphoto.clothing.custom_image_label')}</label>
-                          {idPhotoClothingReferenceFile ? (
-                            <div className="flex items-center gap-2">
-                              <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-600 bg-gray-900 flex-shrink-0">
-                                {idPhotoClothingReferenceUrl && (
-                                  <img src={idPhotoClothingReferenceUrl} alt="Clothing reference" className="w-full h-full object-cover" />
-                                )}
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setIdPhotoClothingReferenceFile(null)}
-                                className="text-sm text-gray-400 hover:text-red-400 transition-colors"
-                              >
-                                {t('idphoto.clothing.custom_image_remove')}
-                              </button>
-                            </div>
-                          ) : (
-                            <label className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-300 border border-gray-600 rounded-lg cursor-pointer hover:bg-white/10 transition-colors">
-                              <input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => { const f = e.target.files?.[0]; if (f) setIdPhotoClothingReferenceFile(f); e.target.value = ''; }}
-                              />
-                              {t('idphoto.clothing.custom_image_btn')}
-                            </label>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2">{t('idphoto.model_recommendation')}</p>
-                </div>
-                {idPhotoFile ? (
-                  <div className="flex flex-col items-center gap-4 w-full max-w-md animate-fade-in bg-gray-800/40 p-6 rounded-xl border border-gray-700/50 backdrop-blur-sm">
-                    <h3 className="text-lg font-bold text-white">{t('start.idphoto_title')}</h3>
-                    <div className="w-40 h-40 rounded-lg overflow-hidden border border-gray-600 bg-gray-900 flex items-center justify-center">
-                      {idPhotoPreviewUrl && <img src={idPhotoPreviewUrl} alt="Uploaded portrait" className="max-w-full max-h-full w-auto h-auto object-contain" />}
-                    </div>
-                    <p className="text-sm text-gray-400">{t('start.idphoto_upload_hint')}</p>
-                    {idPhotoError && <p className="text-red-400 text-sm">{idPhotoError}</p>}
-                    <div className="flex items-center gap-3">
-                      <label className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 border border-gray-600 rounded-lg cursor-pointer hover:bg-white/10 transition-colors">
-                        <input type="file" className="hidden" accept="image/*" onChange={handleIdPhotoFileChange} />
-                        {t('start.idphoto_change_photo')}
-                      </label>
-                      <button
-                        onClick={handleIdPhotoGenerate}
-                        disabled={idPhotoLoading}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-white font-bold bg-emerald-600 rounded-lg shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <IdPhotoIcon className="w-5 h-5" />
-                        {t('start.idphoto_generate_btn')}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-4 w-full animate-fade-in">
-                    <div className="p-12 border-2 border-dashed border-gray-700 rounded-xl bg-gray-800/20 w-full max-w-2xl flex flex-col items-center justify-center gap-4 hover:border-gray-500 transition-colors duration-200">
-                      <label htmlFor="image-upload-idphoto" className="relative inline-flex items-center justify-center px-10 py-5 text-xl font-bold text-white bg-emerald-600 rounded-full cursor-pointer group hover:bg-emerald-500 transition-colors duration-200 shadow-lg shadow-emerald-600/20 focus-within:outline-none focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-800">
-                        <IdPhotoIcon className="w-6 h-6 mr-3" />
-                        {t('start.upload_button')}
-                      </label>
-                      <input id="image-upload-idphoto" type="file" className="hidden" accept="image/*" onChange={handleIdPhotoFileChange} aria-label={t('start.upload_button')} />
-                      <p className="text-sm text-gray-400">{t('start.idphoto_upload_hint')}</p>
-                    </div>
-                  </div>
-                )}
-              </>
-            )
         ) : generatedImages.length > 0 ? (
             <div className="flex flex-col items-center gap-6 w-full max-w-4xl animate-fade-in bg-gray-800/40 p-6 rounded-xl border border-gray-700/50 backdrop-blur-sm">
                 <h3 className="text-xl font-bold text-white">{t('start.select_image')}</h3>

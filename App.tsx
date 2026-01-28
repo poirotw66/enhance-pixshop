@@ -15,26 +15,11 @@ import AdjustmentPanel from './components/AdjustmentPanel';
 import CropPanel from './components/CropPanel';
 import { UndoIcon, RedoIcon, EyeIcon } from './components/icons';
 import StartScreen from './components/StartScreen';
+import IdPhotoPage from './features/idphoto/IdPhotoPage';
+import { dataURLtoFile } from './utils/fileUtils';
 import { useLanguage } from './contexts/LanguageContext';
 import { useSettings } from './contexts/SettingsContext';
 import { useTheme } from './contexts/ThemeContext';
-
-// Helper to convert a data URL string to a File object
-const dataURLtoFile = (dataurl: string, filename: string): File => {
-    const arr = dataurl.split(',');
-    if (arr.length < 2) throw new Error("Invalid data URL");
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch || !mimeMatch[1]) throw new Error("Could not parse MIME type from data URL");
-
-    const mime = mimeMatch[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, {type:mime});
-}
 
 type Tab = 'retouch' | 'adjust' | 'filters' | 'crop';
 
@@ -516,7 +501,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<StartScreen tab="upload" onImageSelected={handleImageUpload} navigate={navigate} />} />
           <Route path="/generate" element={<StartScreen tab="generate" onImageSelected={handleImageUpload} navigate={navigate} />} />
-          <Route path="/idphoto" element={<StartScreen tab="idphoto" onImageSelected={handleImageUpload} navigate={navigate} />} />
+          <Route path="/idphoto" element={<IdPhotoPage onImageSelected={handleImageUpload} />} />
           <Route path="/edit" element={!currentImage ? <Navigate to="/" replace /> : renderEditor()} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
