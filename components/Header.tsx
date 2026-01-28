@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { CogIcon } from './icons';
@@ -34,12 +35,12 @@ const Header: React.FC = () => {
             : 'border-gray-700/50 bg-gray-800/40'
         }`}>
         <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 cursor-default">
+            <Link to="/" className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
                 <SparkleIcon className={`w-6 h-6 ${theme === 'newyear' ? 'text-red-400' : 'text-blue-400'}`} />
                 <h1 className={`text-xl font-bold tracking-tight ${theme === 'newyear' ? 'text-red-50' : 'text-gray-100'}`}>
                 {t('app.title')}
                 </h1>
-            </div>
+            </Link>
 
             <div className="flex items-center gap-3">
                 <button

@@ -21,8 +21,12 @@ import {
 } from '../constants/idPhoto';
 import type { IdPhotoType, RetouchLevel, OutputSpec, ClothingOption } from '../constants/idPhoto';
 
+type StartTab = 'upload' | 'generate' | 'idphoto';
+
 interface StartScreenProps {
+  tab: StartTab;
   onImageSelected: (file: File) => void;
+  navigate: (path: string) => void;
 }
 
 // Helper to convert a data URL string to a File object
@@ -42,10 +46,9 @@ const dataURLtoFile = (dataurl: string, filename: string): File => {
     return new File([u8arr], filename, {type:mime});
 }
 
-const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
+const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigate }) => {
   const { t } = useLanguage();
   const settings = useSettings();
-  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'idphoto'>('upload');
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [generationPrompt, setGenerationPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState<"1:1" | "3:4" | "4:3" | "16:9" | "9:16">("1:1");
@@ -177,9 +180,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
 
   return (
     <div 
-      className={`w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 ${isDraggingOver && (activeTab === 'upload' || activeTab === 'idphoto') ? 'bg-blue-500/10 border-dashed border-blue-400' : 'border-transparent'}`}
+      className={`w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 ${isDraggingOver && (tab === 'upload' || tab === 'idphoto') ? 'bg-blue-500/10 border-dashed border-blue-400' : 'border-transparent'}`}
       onDragOver={(e) => { 
-          if (activeTab === 'upload' || activeTab === 'idphoto') {
+          if (tab === 'upload' || tab === 'idphoto') {
             e.preventDefault(); 
             setIsDraggingOver(true); 
           }
@@ -190,9 +193,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
         setIsDraggingOver(false);
         const file = e.dataTransfer.files?.[0];
         if (!file) return;
-        if (activeTab === 'upload') {
+        if (tab === 'upload') {
           onImageSelected(file);
-        } else if (activeTab === 'idphoto') {
+        } else if (tab === 'idphoto') {
           setIdPhotoFile(file);
           setIdPhotoResult(null);
           setIdPhotoError(null);
@@ -210,9 +213,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
         {/* Tab Switcher */}
         <div className="bg-gray-800/50 p-1 rounded-xl flex flex-wrap items-center justify-center gap-1 border border-gray-700 mt-4 mb-4">
             <button
-                onClick={() => { setActiveTab('upload'); setGeneratedImages([]); }}
+                onClick={() => navigate('/')}
                 className={`px-6 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    activeTab === 'upload' 
+                    tab === 'upload' 
                     ? 'bg-gray-700 text-white shadow-lg' 
                     : 'text-gray-400 hover:text-white hover:bg-white/10'
                 }`}
@@ -220,9 +223,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
                 {t('start.tab_upload')}
             </button>
             <button
-                onClick={() => setActiveTab('generate')}
+                onClick={() => navigate('/generate')}
                 className={`px-6 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    activeTab === 'generate' 
+                    tab === 'generate' 
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
                     : 'text-gray-400 hover:text-white hover:bg-white/10'
                 }`}
@@ -230,9 +233,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
                 {t('start.tab_generate')}
             </button>
             <button
-                onClick={() => { setActiveTab('idphoto'); setGeneratedImages([]); }}
+                onClick={() => navigate('/idphoto')}
                 className={`px-6 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    activeTab === 'idphoto' 
+                    tab === 'idphoto' 
                     ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' 
                     : 'text-gray-400 hover:text-white hover:bg-white/10'
                 }`}
@@ -241,7 +244,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
             </button>
         </div>
 
-        {activeTab === 'upload' ? (
+        {tab === 'upload' ? (
             <div className="flex flex-col items-center gap-4 w-full animate-fade-in">
                 <div className="p-12 border-2 border-dashed border-gray-700 rounded-xl bg-gray-800/20 w-full max-w-2xl flex flex-col items-center justify-center gap-4 hover:border-gray-500 transition-colors duration-200">
                     <label htmlFor="image-upload-start" className="relative inline-flex items-center justify-center px-10 py-5 text-xl font-bold text-white bg-blue-600 rounded-full cursor-pointer group hover:bg-blue-500 transition-colors duration-200 shadow-lg shadow-blue-600/20 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-800">
@@ -252,7 +255,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
                     <p className="text-sm text-gray-400">{t('start.upload_drag')}</p>
                 </div>
             </div>
-        ) : activeTab === 'idphoto' ? (
+        ) : tab === 'idphoto' ? (
             idPhotoResult ? (
               <div className="flex flex-col items-center gap-6 w-full max-w-2xl animate-fade-in bg-gray-800/40 p-6 rounded-xl border border-gray-700/50 backdrop-blur-sm">
                 <h3 className="text-xl font-bold text-white">{t('start.idphoto_title')}</h3>
@@ -536,7 +539,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
             </div>
         )}
 
-        {activeTab === 'upload' && (
+        {tab === 'upload' && (
             <div className="mt-16 w-full animate-fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50 flex flex-col items-center text-center hover:bg-white/10 hover:border-gray-600 transition-colors duration-200 cursor-default">

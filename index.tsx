@@ -5,6 +5,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { SettingsProvider } from './contexts/SettingsContext';
@@ -15,15 +16,19 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
+const basename = (import.meta.env.BASE_URL || '/').replace(/\/$/, '') || '/';
+
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <SettingsProvider>
-        <LanguageProvider>
-          <App />
-        </LanguageProvider>
-      </SettingsProvider>
-    </ThemeProvider>
+    <BrowserRouter basename={basename}>
+      <ThemeProvider>
+        <SettingsProvider>
+          <LanguageProvider>
+            <App />
+          </LanguageProvider>
+        </SettingsProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

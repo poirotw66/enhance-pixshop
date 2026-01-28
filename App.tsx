@@ -5,6 +5,7 @@
 
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import ReactCrop, { type Crop, type PixelCrop } from 'react-image-crop';
 import { generateEditedImage, generateFilteredImage, generateAdjustedImage } from './services/geminiService';
 import Header from './components/Header';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
   const { t } = useLanguage();
   const settings = useSettings();
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const [history, setHistory] = useState<File[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [prompt, setPrompt] = useState<string>('');
@@ -107,7 +109,8 @@ const App: React.FC = () => {
     setActiveTab('retouch');
     setCrop(undefined);
     setCompletedCrop(undefined);
-  }, []);
+    navigate('/edit');
+  }, [navigate]);
 
   const handleGenerate = useCallback(async () => {
     if (!currentImage) {
@@ -263,7 +266,8 @@ const App: React.FC = () => {
       setPrompt('');
       setEditHotspot(null);
       setDisplayHotspot(null);
-  }, []);
+      navigate('/');
+  }, [navigate]);
 
   const handleDownload = useCallback(() => {
       if (currentImage) {
@@ -298,7 +302,7 @@ const App: React.FC = () => {
     setEditHotspot({ x: originalX, y: originalY });
 };
 
-  const renderContent = () => {
+  const renderEditor = () => {
     if (error) {
        return (
            <div className="text-center animate-fade-in bg-red-500/10 border border-red-500/20 p-8 rounded-lg max-w-2xl mx-auto flex flex-col items-center gap-4">
@@ -312,11 +316,6 @@ const App: React.FC = () => {
             </button>
           </div>
         );
-    }
-    
-    if (!currentImageUrl) {
-      // StartScreen now handles generation or file selection and returns a single File
-      return <StartScreen onImageSelected={handleImageUpload} />;
     }
 
     const imageDisplay = (
@@ -514,7 +513,13 @@ const App: React.FC = () => {
     <div className="min-h-screen text-gray-100 flex flex-col">
       <Header />
       <main className={`flex-grow w-full max-w-[1600px] mx-auto p-4 md:p-8 flex justify-center ${currentImage ? 'items-start' : 'items-center'}`}>
-        {renderContent()}
+        <Routes>
+          <Route path="/" element={<StartScreen tab="upload" onImageSelected={handleImageUpload} navigate={navigate} />} />
+          <Route path="/generate" element={<StartScreen tab="generate" onImageSelected={handleImageUpload} navigate={navigate} />} />
+          <Route path="/idphoto" element={<StartScreen tab="idphoto" onImageSelected={handleImageUpload} navigate={navigate} />} />
+          <Route path="/edit" element={!currentImage ? <Navigate to="/" replace /> : renderEditor()} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
     </div>
   );
