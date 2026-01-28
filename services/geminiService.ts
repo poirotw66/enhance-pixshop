@@ -4,6 +4,7 @@
 */
 
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { TRAVEL_POSITIVE_TEMPLATE, TRAVEL_NEGATIVE } from "../constants/travel";
 
 interface ServiceSettings {
     apiKey?: string;
@@ -321,6 +322,67 @@ Output: Return ONLY the final ID/passport-style image. Do not return any text.`;
     });
     console.log('Received response from model for ID photo.', response);
     return handleApiResponse(response, 'id-photo');
+};
+
+export interface GenerateTravelPhotoOptions {
+  /** Scene prompt: from a preset or custom text. Replaces {SCENE} in the positive template. */
+  scenePrompt: string;
+  /** Output aspect ratio: 1:1, 16:9, or 9:16. Default 1:1. */
+  aspectRatio?: '1:1' | '16:9' | '9:16';
+  /** Output image size. Flash supports 1K only; Pro supports 1K, 2K, 4K. */
+  imageSize?: '1K' | '2K' | '4K';
+  settings?: ServiceSettings;
+}
+
+/**
+ * Generates a travel photo: the same person in a selected scene.
+ * Uses positive/negative templates from constants/travel.
+ * imageSize: Flash only supports 1K; Pro supports 1K/2K/4K. Non‑Pro requests for 2K/4K are forced to 1K.
+ */
+export const generateTravelPhoto = async (
+  originalImage: File,
+  options: GenerateTravelPhotoOptions
+): Promise<string> => {
+  const { scenePrompt, aspectRatio = '1:1', imageSize: requestedSize, settings: serviceSettings } = options;
+  const positive = TRAVEL_POSITIVE_TEMPLATE.replace('{SCENE}', scenePrompt.trim());
+  const aspectHint = aspectRatio === '16:9'
+    ? 'Output in 16:9 landscape aspect ratio.'
+    : aspectRatio === '9:16'
+      ? 'Output in 9:16 portrait aspect ratio.'
+      : 'Output in 1:1 square aspect ratio.';
+
+  const prompt = `You are an expert travel photo AI. Transform the provided portrait so the person appears in the following scene.
+
+Requirements (MUST follow):
+${positive}
+
+Never do (MUST avoid):
+${TRAVEL_NEGATIVE}
+
+${aspectHint}
+
+Output: Return ONLY the final travel photo. Do not return any text.`;
+  const textPart = { text: prompt };
+
+  const ai = getClient(serviceSettings);
+  const model = getModel(serviceSettings);
+  /** Flash: 1K only; Pro: 1K, 2K, or 4K. */
+  const effectiveImageSize: '1K' | '2K' | '4K' =
+    model === 'gemini-3-pro-image-preview' ? (requestedSize || '1K') : '1K';
+
+  console.log('Starting travel photo generation', { scenePrompt: scenePrompt.slice(0, 60), aspectRatio, imageSize: effectiveImageSize });
+  const originalImagePart = await fileToPart(originalImage);
+
+  const response: GenerateContentResponse = await ai.models.generateContent({
+    model,
+    contents: { parts: [originalImagePart, textPart] },
+    config: {
+      responseModalities: ['TEXT', 'IMAGE'],
+      imageConfig: { imageSize: effectiveImageSize },
+    },
+  });
+  console.log('Received response from model for travel photo.', response);
+  return handleApiResponse(response, 'travel');
 };
 
 /**

@@ -16,6 +16,7 @@ import CropPanel from './components/CropPanel';
 import { UndoIcon, RedoIcon, EyeIcon } from './components/icons';
 import StartScreen from './components/StartScreen';
 import IdPhotoPage from './features/idphoto/IdPhotoPage';
+import TravelPage from './features/travel/TravelPage';
 import { dataURLtoFile } from './utils/fileUtils';
 import { useLanguage } from './contexts/LanguageContext';
 import { useSettings } from './contexts/SettingsContext';
@@ -502,6 +503,7 @@ const App: React.FC = () => {
           <Route path="/" element={<StartScreen tab="upload" onImageSelected={handleImageUpload} navigate={navigate} />} />
           <Route path="/generate" element={<StartScreen tab="generate" onImageSelected={handleImageUpload} navigate={navigate} />} />
           <Route path="/idphoto" element={<IdPhotoPage onImageSelected={handleImageUpload} />} />
+          <Route path="/travel" element={<TravelPage onImageSelected={handleImageUpload} />} />
           <Route path="/edit" element={!currentImage ? <Navigate to="/" replace /> : renderEditor()} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
