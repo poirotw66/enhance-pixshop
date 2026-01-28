@@ -5,12 +5,9 @@
  * 春山企業 韓式證件照 - 證件類型、修圖等級、輸出規格
  */
 
-export type RetouchLevel = 'premium' | 'standard' | 'self';
-export type IdPhotoType = 'domestic' | 'passport' | 'taiwan_compatriot' | 'student' | 'work' | 'military_police_medical' | 'cabin_crew' | 'graduation';
-export type OutputSpec = 'head_shoulders' | 'half_body';
+import type { RetouchLevel, IdPhotoType, OutputSpec, ClothingOption } from '../types';
 
-/** 服裝選項：原本衣服 / 場景預設 / 商務 / 休閒 / 學士服 / 西裝 / 自訂 */
-export type ClothingOption = 'original' | 'scene_default' | 'business' | 'casual' | 'graduation_gown' | 'suit' | 'custom';
+export type { RetouchLevel, IdPhotoType, OutputSpec, ClothingOption } from '../types';
 
 /** 修圖等級：極致完顏® / 完顏® / SELF（妝髮自理） */
 export const RETOUCH_LEVELS: {
