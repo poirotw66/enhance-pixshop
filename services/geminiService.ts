@@ -208,23 +208,29 @@ const ID_PHOTO_BASE_POSITIVE = `Korean ID photo, passport-style photo, professio
 /** Base negative (must avoid) */
 const ID_PHOTO_BASE_NEGATIVE = `different person, change face, change identity, face swap, wrong person, beautify, over-beautify, beauty filter, meitu, snow app, filter, plastic skin, doll face, over-smooth, airbrushed, fake skin, CGI, AI face, AI generated look, anime, cartoon, illustration, painting, 3d render, smile, laughing, open mouth, teeth, exaggerated expression, tilted head, angle view, side view, looking away, dramatic lighting, rim light, hard light, strong shadow, shadow on face, shadow on background, low quality, blurry, noise, jpeg artifacts, oversharpen, deformed, distorted, asymmetrical face, extra face, extra features, bad anatomy, big eyes, small face, unrealistic face, beauty face, idol face`;
 
-export type { RetouchLevel, IdPhotoType, OutputSpec } from '../constants/idPhoto';
+export type { RetouchLevel, IdPhotoType, OutputSpec, ClothingOption } from '../constants/idPhoto';
 import {
     RETOUCH_LEVELS,
     ID_PHOTO_TYPES,
     OUTPUT_SPECS,
+    CLOTHING_OPTIONS,
     DEFAULT_ID_TYPE,
     DEFAULT_RETOUCH_LEVEL,
     DEFAULT_OUTPUT_SPEC,
+    DEFAULT_CLOTHING_OPTION,
     type RetouchLevel,
     type IdPhotoType,
     type OutputSpec,
+    type ClothingOption,
 } from '../constants/idPhoto';
 
 export interface GenerateIdPhotoOptions {
     retouchLevel?: RetouchLevel;
     idType?: IdPhotoType;
     outputSpec?: OutputSpec;
+    clothingOption?: ClothingOption;
+    /** 當 clothingOption === 'custom' 時使用；其餘忽略 */
+    clothingCustomText?: string;
     settings?: ServiceSettings;
 }
 
@@ -239,26 +245,33 @@ export const generateIdPhoto = async (
     originalImage: File,
     options?: GenerateIdPhotoOptions | ServiceSettings
 ): Promise<string> => {
-    const isNewFormat = options && typeof options === 'object' && ('retouchLevel' in options || 'idType' in options || 'outputSpec' in options);
+    const isNewFormat = options && typeof options === 'object' && ('retouchLevel' in options || 'idType' in options || 'outputSpec' in options || 'clothingOption' in options);
     const opts: GenerateIdPhotoOptions = isNewFormat ? (options as GenerateIdPhotoOptions) : { settings: options as ServiceSettings };
     const retouchLevel = opts.retouchLevel ?? DEFAULT_RETOUCH_LEVEL;
     const idType = opts.idType ?? DEFAULT_ID_TYPE;
     const outputSpec = opts.outputSpec ?? DEFAULT_OUTPUT_SPEC;
+    const clothingOption = opts.clothingOption ?? DEFAULT_CLOTHING_OPTION;
+    const clothingCustomText = opts.clothingCustomText?.trim() ?? '';
     const serviceSettings = opts.settings;
 
     const level = RETOUCH_LEVELS.find((l) => l.id === retouchLevel) || RETOUCH_LEVELS[1];
     const type = ID_PHOTO_TYPES.find((t) => t.id === idType) || ID_PHOTO_TYPES[0];
     const spec = OUTPUT_SPECS.find((s) => s.id === outputSpec) || OUTPUT_SPECS[0];
+    const clothingEntry = CLOTHING_OPTIONS.find((c) => c.id === clothingOption) || CLOTHING_OPTIONS[0];
+    const clothingHint = clothingOption === 'custom'
+        ? (clothingCustomText ? `Dress the person in the following attire: ${clothingCustomText}.` : 'Use appropriate professional attire suitable for an ID photo.')
+        : (clothingEntry.promptHint ?? '');
 
     const positive = [
         ID_PHOTO_BASE_POSITIVE,
         spec.cropHint,
         level.positiveModifier,
         type.promptHint,
+        clothingHint,
     ].filter(Boolean).join(' ');
     const negative = [ID_PHOTO_BASE_NEGATIVE, level.negativeExtra].filter(Boolean).join(' ');
 
-    console.log('Starting ID photo generation', { retouchLevel, idType, outputSpec });
+    console.log('Starting ID photo generation', { retouchLevel, idType, outputSpec, clothingOption });
     const ai = getClient(serviceSettings);
     const model = getModel(serviceSettings);
     const originalImagePart = await fileToPart(originalImage);

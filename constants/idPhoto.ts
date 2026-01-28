@@ -9,6 +9,9 @@ export type RetouchLevel = 'premium' | 'standard' | 'self';
 export type IdPhotoType = 'domestic' | 'passport' | 'taiwan_compatriot' | 'student' | 'work' | 'military_police_medical' | 'cabin_crew' | 'graduation';
 export type OutputSpec = 'head_shoulders' | 'half_body';
 
+/** 服裝選項：原本衣服 / 場景預設 / 商務 / 休閒 / 學士服 / 西裝 / 自訂 */
+export type ClothingOption = 'original' | 'scene_default' | 'business' | 'casual' | 'graduation_gown' | 'suit' | 'custom';
+
 /** 修圖等級：極致完顏® / 完顏® / SELF（妝髮自理） */
 export const RETOUCH_LEVELS: {
   id: RetouchLevel;
@@ -68,6 +71,23 @@ export const OUTPUT_SPECS: {
   { id: 'half_body', nameKey: 'idphoto.spec.half_body', cropHint: 'upper body, half-body portrait, from chest or waist up, centered and symmetrical, proper framing.' },
 ];
 
+/** 服裝選項（用於 positive prompt 的 clothing 描述）*/
+export const CLOTHING_OPTIONS: {
+  id: ClothingOption;
+  nameKey: string;
+  /** 當 id !== 'custom' 時使用；custom 時改用地端傳入的 clothingCustomText */
+  promptHint: string | null;
+}[] = [
+  { id: 'original', nameKey: 'idphoto.clothing.original', promptHint: 'Keep the exact same clothing and outfit as in the source photo. Do not change, replace, or alter the subject\'s clothes.' },
+  { id: 'scene_default', nameKey: 'idphoto.clothing.scene_default', promptHint: 'Use appropriate default formal attire for a professional ID photo: neat, simple, collared shirt or blouse, suitable for official documents. Clean and professional look.' },
+  { id: 'business', nameKey: 'idphoto.clothing.business', promptHint: 'Dress the person in business formal attire: business suit, blazer, dress shirt, or professional business wear. Professional and reliable appearance.' },
+  { id: 'casual', nameKey: 'idphoto.clothing.casual', promptHint: 'Dress the person in casual or home wear: comfortable casual clothing, smart-casual, or loungewear. Relaxed but neat.' },
+  { id: 'graduation_gown', nameKey: 'idphoto.clothing.graduation_gown', promptHint: 'Dress the person in academic graduation gown (cap and gown) for a graduation portrait. Formal academic attire.' },
+  { id: 'suit', nameKey: 'idphoto.clothing.suit', promptHint: 'Dress the person in a formal suit: dress shirt, suit jacket, and tie. Classic formal portrait style.' },
+  { id: 'custom', nameKey: 'idphoto.clothing.custom', promptHint: null },
+];
+
 export const DEFAULT_ID_TYPE: IdPhotoType = 'domestic';
 export const DEFAULT_RETOUCH_LEVEL: RetouchLevel = 'standard';
 export const DEFAULT_OUTPUT_SPEC: OutputSpec = 'head_shoulders';
+export const DEFAULT_CLOTHING_OPTION: ClothingOption = 'original';

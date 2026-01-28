@@ -13,11 +13,13 @@ import {
   ID_PHOTO_TYPES,
   RETOUCH_LEVELS,
   OUTPUT_SPECS,
+  CLOTHING_OPTIONS,
   DEFAULT_ID_TYPE,
   DEFAULT_RETOUCH_LEVEL,
   DEFAULT_OUTPUT_SPEC,
+  DEFAULT_CLOTHING_OPTION,
 } from '../constants/idPhoto';
-import type { IdPhotoType, RetouchLevel, OutputSpec } from '../constants/idPhoto';
+import type { IdPhotoType, RetouchLevel, OutputSpec, ClothingOption } from '../constants/idPhoto';
 
 interface StartScreenProps {
   onImageSelected: (file: File) => void;
@@ -61,6 +63,8 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
   const [idPhotoType, setIdPhotoType] = useState<IdPhotoType>(DEFAULT_ID_TYPE);
   const [idPhotoRetouchLevel, setIdPhotoRetouchLevel] = useState<RetouchLevel>(DEFAULT_RETOUCH_LEVEL);
   const [idPhotoOutputSpec, setIdPhotoOutputSpec] = useState<OutputSpec>(DEFAULT_OUTPUT_SPEC);
+  const [idPhotoClothingOption, setIdPhotoClothingOption] = useState<ClothingOption>(DEFAULT_CLOTHING_OPTION);
+  const [idPhotoClothingCustomText, setIdPhotoClothingCustomText] = useState('');
 
   useEffect(() => {
     if (idPhotoFile) {
@@ -126,6 +130,10 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
       setIdPhotoError(t('start.error_no_image_idphoto'));
       return;
     }
+    if (idPhotoClothingOption === 'custom' && !idPhotoClothingCustomText.trim()) {
+      setIdPhotoError(t('idphoto.error_custom_clothing_empty'));
+      return;
+    }
     setIdPhotoError(null);
     setIdPhotoLoading(true);
     try {
@@ -133,6 +141,8 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
         retouchLevel: idPhotoRetouchLevel,
         idType: idPhotoType,
         outputSpec: idPhotoOutputSpec,
+        clothingOption: idPhotoClothingOption,
+        clothingCustomText: idPhotoClothingOption === 'custom' ? idPhotoClothingCustomText.trim() : undefined,
         settings: { apiKey: settings.apiKey, model: settings.model },
       });
       setIdPhotoResult(url);
@@ -142,7 +152,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
     } finally {
       setIdPhotoLoading(false);
     }
-  }, [idPhotoFile, idPhotoRetouchLevel, idPhotoType, idPhotoOutputSpec, settings.apiKey, settings.model, t]);
+  }, [idPhotoFile, idPhotoRetouchLevel, idPhotoType, idPhotoOutputSpec, idPhotoClothingOption, idPhotoClothingCustomText, settings.apiKey, settings.model, t]);
 
   const handleIdPhotoDownload = useCallback(() => {
     if (!idPhotoResult) return;
@@ -313,6 +323,27 @@ const StartScreen: React.FC<StartScreenProps> = ({ onImageSelected }) => {
                         </button>
                       ))}
                     </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">{t('idphoto.label.clothing')}</label>
+                    <select
+                      value={idPhotoClothingOption}
+                      onChange={(e) => setIdPhotoClothingOption(e.target.value as ClothingOption)}
+                      className="w-full bg-gray-900/50 border border-gray-600 rounded-lg p-2.5 text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    >
+                      {CLOTHING_OPTIONS.map((c) => (
+                        <option key={c.id} value={c.id}>{t(c.nameKey)}</option>
+                      ))}
+                    </select>
+                    {idPhotoClothingOption === 'custom' && (
+                      <input
+                        type="text"
+                        value={idPhotoClothingCustomText}
+                        onChange={(e) => setIdPhotoClothingCustomText(e.target.value)}
+                        placeholder={t('idphoto.clothing.custom_placeholder')}
+                        className="mt-2 w-full bg-gray-900/50 border border-gray-600 rounded-lg p-2.5 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      />
+                    )}
                   </div>
                 </div>
                 {idPhotoFile ? (
