@@ -10,7 +10,7 @@ type Language = 'en' | 'zh-TW';
 const translations: Record<Language, Record<string, string>> = {
   en: {
     "app.title": "Pixshop",
-    
+
     "start.title_part1": "AI-Powered Photo Editor",
     "start.title_part2": "& Generator",
     "start.subtitle": "Upload a photo to edit, or describe what you want and let AI generate it for you.",
@@ -116,6 +116,10 @@ const translations: Record<Language, Record<string, string>> = {
     "travel.error_no_scene": "Please select a scene or enter a custom description.",
     "travel.error_custom_scene_empty": "Please enter a description and/or upload a reference scene photo.",
     "travel.error_failed": "Travel photo generation failed.",
+    "travel.map_mode_label": "Select Destination",
+    "travel.map_world": "World",
+    "travel.map_taiwan": "Taiwan",
+    "travel.map_instruction": "Click on a marker to select the travel destination",
     "travel.scene.shibuya": "Shibuya, Tokyo",
     "travel.scene.eiffel": "Eiffel Tower, Paris",
     "travel.scene.iceland": "Iceland",
@@ -146,7 +150,7 @@ const translations: Record<Language, Record<string, string>> = {
     "main.btn_reset": "Reset",
     "main.btn_start_over": "Start Over",
     "main.btn_download": "Download Image",
-    
+
     "main.error_title": "An Error Occurred",
     "main.error_try_again": "Try Again",
     "main.error_no_image_edit": "No image loaded to edit.",
@@ -159,7 +163,7 @@ const translations: Record<Language, Record<string, string>> = {
     "main.error_failed_adjust": "Failed to apply the adjustment.",
     "main.error_no_crop": "Please select an area to crop.",
     "main.error_failed_crop": "Could not process the crop.",
-    
+
     "panel.adjust.title": "Apply a Professional Adjustment",
     "panel.adjust.blur": "Blur Background",
     "panel.adjust.details": "Enhance Details",
@@ -167,7 +171,7 @@ const translations: Record<Language, Record<string, string>> = {
     "panel.adjust.studio": "Studio Light",
     "panel.adjust.placeholder": "Or describe an adjustment (e.g., 'change background to a forest')",
     "panel.adjust.apply": "Apply Adjustment",
-    
+
     "panel.filter.title": "Apply a Filter",
     "panel.filter.synthwave": "Synthwave",
     "panel.filter.anime": "Anime",
@@ -175,7 +179,7 @@ const translations: Record<Language, Record<string, string>> = {
     "panel.filter.glitch": "Glitch",
     "panel.filter.placeholder": "Or describe a custom filter (e.g., '80s synthwave glow')",
     "panel.filter.apply": "Apply Filter",
-    
+
     "panel.crop.title": "Crop Image",
     "panel.crop.instr": "Click and drag on the image to select a crop area.",
     "panel.crop.aspect": "Aspect Ratio:",
@@ -306,6 +310,10 @@ const translations: Record<Language, Record<string, string>> = {
     "travel.error_no_scene": "請選擇場景或輸入自訂描述。",
     "travel.error_custom_scene_empty": "請輸入描述和／或上傳參考場景照片。",
     "travel.error_failed": "旅遊照生成失敗。",
+    "travel.map_mode_label": "選擇景點",
+    "travel.map_world": "世界地圖",
+    "travel.map_taiwan": "台灣地圖",
+    "travel.map_instruction": "點擊地圖上的標記來選擇旅遊地點",
     "travel.scene.shibuya": "東京澀谷",
     "travel.scene.eiffel": "巴黎鐵塔",
     "travel.scene.iceland": "冰島",
