@@ -105,6 +105,8 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                     setAspectRatio={tr.setAspectRatio}
                     imageSize={tr.imageSize}
                     setImageSize={tr.setImageSize}
+                    useReferenceImage={tr.useReferenceImage}
+                    setUseReferenceImage={tr.setUseReferenceImage}
                     disabled={tr.loading}
                     showSceneSelector={false}
                   />
@@ -122,6 +124,8 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                   setAspectRatio={tr.setAspectRatio}
                   imageSize={tr.imageSize}
                   setImageSize={tr.setImageSize}
+                  useReferenceImage={tr.useReferenceImage}
+                  setUseReferenceImage={tr.setUseReferenceImage}
                   disabled={tr.loading}
                   showSceneSelector={true}
                 />

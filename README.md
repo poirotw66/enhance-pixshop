@@ -56,6 +56,9 @@ AI 驅動的照片編輯與生成器，以 Google Gemini API 提供修圖、濾�
    ```
    依終端顯示網址開啟（例如 http://localhost:5173）。
 
+4. **（選用）旅遊場景參考圖**  
+   專案不將 `public/images/scenes/` 內的大圖提交至 Git，以控制儲存庫大小。若要使用「AI 旅遊照」的場景參考圖以提升生成品質，請依 [docs/SCENE_IMAGES_SOURCES.md](docs/SCENE_IMAGES_SOURCES.md) 下載免費圖庫照片並放入 `public/images/scenes/`；未放置時仍可正常使用，僅改以文字描述生成。
+
 ---
 
 ## 可用指令

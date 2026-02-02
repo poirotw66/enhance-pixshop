@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 .shared/
 .cursor/
+
+# Scene reference images (large; not committed; see docs/SCENE_IMAGES_SOURCES.md)
+public/images/scenes/*.jpg
+public/images/scenes/*.jpeg
+public/images/scenes/*.png
+public/images/scenes/*.webp

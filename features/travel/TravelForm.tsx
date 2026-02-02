@@ -23,6 +23,8 @@ interface TravelFormProps {
   setAspectRatio: (v: TravelAspectRatio) => void;
   imageSize: TravelImageSize;
   setImageSize: (v: TravelImageSize) => void;
+  useReferenceImage: boolean;
+  setUseReferenceImage: (v: boolean) => void;
   disabled?: boolean;
   showSceneSelector?: boolean;
 }
@@ -43,6 +45,8 @@ const TravelForm: React.FC<TravelFormProps> = ({
   setAspectRatio,
   imageSize,
   setImageSize,
+  useReferenceImage,
+  setUseReferenceImage,
   disabled = false,
   showSceneSelector = true,
 }) => {
@@ -86,6 +90,53 @@ const TravelForm: React.FC<TravelFormProps> = ({
         </div>
       </div>
 
+      <div className="bg-gray-900/30 p-3 rounded-lg border border-gray-700/50">
+        <label className="block text-sm font-medium text-gray-400 mb-2">{t('travel.label.ref_image')}</label>
+
+        <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => setUseReferenceImage(!useReferenceImage)}
+            disabled={disabled}
+            className={`px-3 py-1.5 flex items-center gap-2 rounded text-xs font-medium transition-colors ${useReferenceImage ? 'bg-indigo-600 text-white border border-indigo-500' : 'bg-gray-800 text-gray-400 border border-gray-600'}`}
+          >
+            <span className={`w-2 h-2 rounded-full ${useReferenceImage ? 'bg-white' : 'bg-gray-500'}`}></span>
+            {useReferenceImage ? t('travel.ref_image.on') : t('travel.ref_image.off')}
+          </button>
+          <span className="text-[10px] text-gray-500">{t('travel.ref_image.hint')}</span>
+        </div>
+
+        {useReferenceImage && (
+          <div className="mt-2 animate-fade-in">
+            {customSceneReferenceFile ? (
+              <div className="flex items-center gap-3">
+                <div className="w-16 h-16 rounded border border-gray-600 bg-gray-900 overflow-hidden flex-shrink-0">
+                  {customSceneReferenceUrl && (
+                    <img src={customSceneReferenceUrl} alt="Ref" className="w-full h-full object-cover" />
+                  )}
+                </div>
+                <button
+                  onClick={() => setCustomSceneReferenceFile(null)}
+                  disabled={disabled}
+                  className="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1"
+                >
+                  ✕ {t('travel.ref_image.remove')}
+                </button>
+              </div>
+            ) : (
+              <label className="inline-flex items-center px-3 py-2 border border-dashed border-gray-600 rounded text-xs text-gray-400 cursor-pointer hover:bg-gray-800/50 hover:text-gray-200 transition-colors">
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  disabled={disabled}
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) setCustomSceneReferenceFile(f); e.target.value = ''; }}
+                />
+                + {t('travel.ref_image.upload')}
+              </label>
+            )}
+          </div>
+        )}
+      </div>
       {showSceneSelector && (
         <div>
           <div className="mb-4 pt-4 border-t border-gray-700/50"></div>
@@ -191,8 +242,9 @@ const TravelForm: React.FC<TravelFormProps> = ({
             </div>
           </div>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 

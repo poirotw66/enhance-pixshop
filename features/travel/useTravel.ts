@@ -5,7 +5,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import * as React from 'react';
-import { generateTravelPhoto } from '../../services/geminiService';
+import { generateTravelPhoto, generateOptimizedPrompt } from '../../services/geminiService';
 import { generateDynamicTravelPrompt } from '../../utils/travelPromptGenerator';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -20,7 +20,16 @@ const IS_PRO = (m: string) => m === 'gemini-3-pro-image-preview';
 async function urlToFile(url: string, filename: string, mimeType: string): Promise<File> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+
+  const contentType = res.headers.get('content-type');
+  if (contentType && !contentType.startsWith('image/')) {
+    throw new Error(`Invalid content type: ${contentType} for ${url}. Expected image.`);
+  }
+
   const blob = await res.blob();
+  if (blob.size < 100) { // arbitrary small size check to avoid empty/error responses
+    throw new Error(`File too small: ${url}`);
+  }
   return new File([blob], filename, { type: mimeType });
 }
 
@@ -39,6 +48,9 @@ export function useTravel() {
   const [customSceneReferenceUrl, setCustomSceneReferenceUrl] = useState<string | null>(null);
   const [aspectRatio, setAspectRatio] = useState<TravelAspectRatio>(DEFAULT_TRAVEL_ASPECT);
   const [imageSize, setImageSize] = useState<TravelImageSize>(DEFAULT_TRAVEL_IMAGE_SIZE);
+  // New state for controlling reference image usage
+  const [useReferenceImage, setUseReferenceImage] = useState<boolean>(true);
+
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [resultSceneNameKey, setResultSceneNameKey] = useState<string | null>(null);
   const [resultSceneCustomLabel, setResultSceneCustomLabel] = useState<string | null>(null);
@@ -101,12 +113,13 @@ export function useTravel() {
     let sceneReferenceImage: File | undefined;
     let resolvedSceneNameKey: string | null = null;
     let resolvedSceneCustomLabel: string | null = null;
+
     if (selectedSceneId === TRAVEL_SCENE_ID_RANDOM) {
       const picked = pickRandomTravelScene();
       // Enhance the prompt with dynamic variations
       scenePrompt = generateDynamicTravelPrompt(picked.prompt);
 
-      if (picked.referenceImagePath) {
+      if (useReferenceImage && picked.referenceImagePath) {
         try {
           sceneReferenceImage = await urlToFile(picked.referenceImagePath, `${picked.id}_ref.jpg`, 'image/jpeg');
         } catch (e) {
@@ -117,12 +130,29 @@ export function useTravel() {
       }
       resolvedSceneNameKey = picked.nameKey;
     } else if (selectedSceneId === 'custom') {
-      scenePrompt = resolveScenePrompt();
-      if (!scenePrompt && !customSceneReferenceFile) {
+      const rawPrompt = resolveScenePrompt();
+      if (!rawPrompt && !customSceneReferenceFile) {
         setError(t('travel.error_no_scene'));
         return;
       }
-      // For custom prompts, we use exactly what the user typed without modification
+
+      // Auto-optimize prompt for custom scenes using AI
+      setLoading(true);
+      try {
+        if (rawPrompt) {
+          scenePrompt = await generateOptimizedPrompt(
+            rawPrompt,
+            customSceneReferenceFile ?? undefined,
+            { apiKey: settings.apiKey, model: settings.model }
+          );
+        } else {
+          scenePrompt = "";
+        }
+      } catch (e) {
+        console.warn("Prompt optimization failed, using raw prompt", e);
+        scenePrompt = rawPrompt;
+      }
+
       sceneReferenceImage = customSceneReferenceFile ?? undefined;
       resolvedSceneCustomLabel = customSceneText.trim() || null;
     } else {
@@ -137,14 +167,16 @@ export function useTravel() {
       // Enhance the prompt with dynamic variations
       scenePrompt = generateDynamicTravelPrompt(basePrompt);
 
-      // Use user's custom reference if provided, otherwise check for scene's built-in reference
+      // Logic:
+      // 1. If user uploaded a custom reference file (in custom inputs), ALWAYS use it.
+      // 2. If NO custom file, AND 'useReferenceImage' is true, try to load the scene's built-in reference.
       if (customSceneReferenceFile) {
         sceneReferenceImage = customSceneReferenceFile;
-      } else if (scene?.referenceImagePath) {
+      } else if (useReferenceImage && scene?.referenceImagePath) {
         try {
           sceneReferenceImage = await urlToFile(scene.referenceImagePath, `${scene.id}_ref.jpg`, 'image/jpeg');
         } catch (e) {
-          console.log(`Note: No reference image found at ${scene.referenceImagePath}, falling back to text prompt.`);
+          console.log(`Note: No valid reference image found at ${scene.referenceImagePath}, falling back to text prompt.`);
           sceneReferenceImage = undefined;
         }
       } else {
@@ -172,7 +204,7 @@ export function useTravel() {
     } finally {
       setLoading(false);
     }
-  }, [file, selectedSceneId, customSceneText, customSceneReferenceFile, resolveScenePrompt, aspectRatio, imageSize, settings.apiKey, settings.model, t]);
+  }, [file, selectedSceneId, customSceneText, customSceneReferenceFile, resolveScenePrompt, aspectRatio, imageSize, settings.apiKey, settings.model, t, useReferenceImage]);
 
   const handleDownload = useCallback(() => {
     if (!result) return;
@@ -227,6 +259,8 @@ export function useTravel() {
     setAspectRatio,
     imageSize,
     setImageSize,
+    useReferenceImage,
+    setUseReferenceImage,
     isDraggingOver,
     handleFileChange,
     handleGenerate,
