@@ -33,6 +33,33 @@ const SCENE_BTN = 'px-4 py-2 rounded-lg text-sm font-medium transition-colors cu
 const SCENE_ACTIVE = 'bg-amber-600 text-white border border-amber-500';
 const SCENE_INACTIVE = 'bg-gray-800 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:border-gray-500';
 
+const CollapsibleSection: React.FC<{ title: string; children: React.ReactNode; icon?: string }> = ({ title, children, icon }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  return (
+    <div className="border border-gray-700/50 rounded-lg overflow-hidden bg-gray-900/20">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-2.5 flex items-center justify-between text-sm font-semibold text-gray-300 hover:bg-gray-700/30 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          {icon && <span>{icon}</span>}
+          {title}
+        </div>
+        <svg
+          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && <div className="px-4 pb-4 animate-slide-down">{children}</div>}
+    </div>
+  );
+};
+
 const TravelForm: React.FC<TravelFormProps> = ({
   selectedSceneId,
   setSelectedSceneId,
@@ -146,33 +173,121 @@ const TravelForm: React.FC<TravelFormProps> = ({
           <div className="space-y-4">
             <div>
               <h4 className="text-xs font-semibold text-amber-400/90 uppercase tracking-wider mb-2">{t('travel.group.international')}</h4>
-              <div className="flex flex-wrap gap-2">
-                {TRAVEL_SCENES_INTERNATIONAL.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSelectedSceneId(s.id)}
-                    disabled={disabled}
-                    className={`${SCENE_BTN} ${selectedSceneId === s.id ? SCENE_ACTIVE : SCENE_INACTIVE}`}
-                  >
-                    {t(s.nameKey)}
-                  </button>
-                ))}
+
+              <div className="space-y-2">
+                {/* International Scenery Section */}
+                <CollapsibleSection title={t('travel.category.scenery')} icon="🏞️">
+                  <div className="space-y-4 pt-2">
+                    {(['europe', 'asia', 'namerica', 'samerica', 'oceania', 'africa'] as const).map(continent => {
+                      const continentScenes = TRAVEL_SCENES_INTERNATIONAL.filter(s => s.category === 'scenery' && s.continent === continent);
+                      if (continentScenes.length === 0) return null;
+                      return (
+                        <div key={`intl-scenery-${continent}`}>
+                          <h5 className="text-[10px] font-bold text-gray-500 uppercase mb-1.5 px-1">{t(`travel.continent.${continent}`)}</h5>
+                          <div className="flex flex-wrap gap-2">
+                            {continentScenes.map((s) => (
+                              <button
+                                key={s.id}
+                                onClick={() => setSelectedSceneId(s.id)}
+                                disabled={disabled}
+                                className={`${SCENE_BTN} ${selectedSceneId === s.id ? SCENE_ACTIVE : SCENE_INACTIVE}`}
+                              >
+                                {t(s.nameKey)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CollapsibleSection>
+
+                {/* International Gourmet Section */}
+                <CollapsibleSection title={t('travel.category.food')} icon="🍜">
+                  <div className="space-y-4 pt-2">
+                    {(['europe', 'asia', 'namerica', 'samerica', 'oceania', 'africa'] as const).map(continent => {
+                      const continentScenes = TRAVEL_SCENES_INTERNATIONAL.filter(s => s.category === 'food' && s.continent === continent);
+                      if (continentScenes.length === 0) return null;
+                      return (
+                        <div key={`intl-food-${continent}`}>
+                          <h5 className="text-[10px] font-bold text-gray-500 uppercase mb-1.5 px-1">{t(`travel.continent.${continent}`)}</h5>
+                          <div className="flex flex-wrap gap-2">
+                            {continentScenes.map((s) => (
+                              <button
+                                key={s.id}
+                                onClick={() => setSelectedSceneId(s.id)}
+                                disabled={disabled}
+                                className={`${SCENE_BTN} ${selectedSceneId === s.id ? SCENE_ACTIVE : SCENE_INACTIVE}`}
+                              >
+                                {t(s.nameKey)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CollapsibleSection>
               </div>
             </div>
 
             <div>
               <h4 className="text-xs font-semibold text-amber-400/90 uppercase tracking-wider mb-2">{t('travel.group.taiwan')}</h4>
-              <div className="flex flex-wrap gap-2">
-                {TRAVEL_SCENES_TAIWAN.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSelectedSceneId(s.id)}
-                    disabled={disabled}
-                    className={`${SCENE_BTN} ${selectedSceneId === s.id ? SCENE_ACTIVE : SCENE_INACTIVE}`}
-                  >
-                    {t(s.nameKey)}
-                  </button>
-                ))}
+
+              <div className="space-y-2">
+                {/* Taiwan Scenery Section */}
+                <CollapsibleSection title={t('travel.category.scenery')} icon="🏞️">
+                  <div className="space-y-4 pt-2">
+                    {(['north', 'central', 'south', 'east', 'islands'] as const).map(region => {
+                      const regionalScenes = TRAVEL_SCENES_TAIWAN.filter(s => s.category === 'scenery' && s.region === region);
+                      if (regionalScenes.length === 0) return null;
+                      return (
+                        <div key={`scenery-${region}`}>
+                          <h5 className="text-[10px] font-bold text-gray-500 uppercase mb-1.5 px-1">{t(`travel.region.${region}`)}</h5>
+                          <div className="flex flex-wrap gap-2">
+                            {regionalScenes.map((s) => (
+                              <button
+                                key={s.id}
+                                onClick={() => setSelectedSceneId(s.id)}
+                                disabled={disabled}
+                                className={`${SCENE_BTN} ${selectedSceneId === s.id ? SCENE_ACTIVE : SCENE_INACTIVE}`}
+                              >
+                                {t(s.nameKey)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CollapsibleSection>
+
+                {/* Taiwan Gourmet Section */}
+                <CollapsibleSection title={t('travel.category.food')} icon="🍜">
+                  <div className="space-y-4 pt-2">
+                    {(['north', 'central', 'south', 'east', 'islands'] as const).map(region => {
+                      const regionalScenes = TRAVEL_SCENES_TAIWAN.filter(s => s.category === 'food' && s.region === region);
+                      if (regionalScenes.length === 0) return null;
+                      return (
+                        <div key={`food-${region}`}>
+                          <h5 className="text-[10px] font-bold text-gray-500 uppercase mb-1.5 px-1">{t(`travel.region.${region}`)}</h5>
+                          <div className="flex flex-wrap gap-2">
+                            {regionalScenes.map((s) => (
+                              <button
+                                key={s.id}
+                                onClick={() => setSelectedSceneId(s.id)}
+                                disabled={disabled}
+                                className={`${SCENE_BTN} ${selectedSceneId === s.id ? SCENE_ACTIVE : SCENE_INACTIVE}`}
+                              >
+                                {t(s.nameKey)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CollapsibleSection>
               </div>
             </div>
 
