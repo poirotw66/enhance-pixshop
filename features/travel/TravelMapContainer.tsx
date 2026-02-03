@@ -58,36 +58,38 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({ selectedSceneId
                 </div>
             </div>
 
-            {/* Category Filter - Only for Taiwan Map */}
-            {mapType === 'taiwan' && (
-                <div className="flex items-center justify-center -mt-2">
-                    <div className="flex bg-gray-900/40 p-1 rounded-lg border border-gray-700/30">
-                        {(['scenery', 'food', 'all'] as const).map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setCategoryFilter(cat)}
-                                className={`px-4 py-1.5 text-[10px] font-bold rounded-md transition-all duration-200 ${categoryFilter === cat
-                                    ? cat === 'food'
-                                        ? 'bg-orange-600/80 text-white shadow-sm'
-                                        : 'bg-indigo-600/80 text-white shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-                                    }`}
-                            >
-                                {cat === 'scenery' && '🏞️ '}
-                                {cat === 'food' && '🍜 '}
-                                {cat === 'all' && '✨ '}
-                                {t(`travel.category.${cat}`)}
-                            </button>
-                        ))}
-                    </div>
+            {/* Category Filter - For both Maps */}
+            <div className="flex items-center justify-center -mt-2">
+                <div className="flex bg-gray-900/40 p-1 rounded-lg border border-gray-700/30">
+                    {(['scenery', 'food', 'all'] as const).map((cat) => (
+                        <button
+                            key={cat}
+                            onClick={() => setCategoryFilter(cat)}
+                            className={`px-4 py-1.5 text-[10px] font-bold rounded-md transition-all duration-200 ${categoryFilter === cat
+                                ? cat === 'food'
+                                    ? 'bg-orange-600/80 text-white shadow-sm'
+                                    : 'bg-indigo-600/80 text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                                }`}
+                        >
+                            {cat === 'scenery' && '🏞️ '}
+                            {cat === 'food' && '🍜 '}
+                            {cat === 'all' && '✨ '}
+                            {t(`travel.category.${cat}`)}
+                        </button>
+                    ))}
                 </div>
-            )}
+            </div>
 
             {/* Map display - only render the active map */}
             <div className="min-h-[450px] flex items-center justify-center rounded-xl overflow-hidden bg-gray-950/20">
                 {mapType === 'world' && (
                     <div className="w-full animate-fade-in">
-                        <WorldMap selectedSceneId={selectedSceneId} onSceneSelect={onSceneSelect} />
+                        <WorldMap
+                            selectedSceneId={selectedSceneId}
+                            onSceneSelect={onSceneSelect}
+                            categoryFilter={categoryFilter}
+                        />
                     </div>
                 )}
                 {mapType === 'taiwan' && (

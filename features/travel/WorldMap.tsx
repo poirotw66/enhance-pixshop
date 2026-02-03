@@ -4,15 +4,16 @@
  */
 
 import React, { useState } from 'react';
-import { TRAVEL_SCENES_INTERNATIONAL } from '../../constants/travel';
+import { TRAVEL_SCENES_INTERNATIONAL, TravelSceneCategory } from '../../constants/travel';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 interface WorldMapProps {
     selectedSceneId: string;
     onSceneSelect: (id: string) => void;
+    categoryFilter?: TravelSceneCategory | 'all';
 }
 
-const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) => {
+const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect, categoryFilter = 'all' }) => {
     const { t } = useLanguage();
     const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -21,6 +22,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
         e.stopPropagation();
         onSceneSelect(sceneId);
     };
+
+    const filteredScenes = TRAVEL_SCENES_INTERNATIONAL.filter(scene => {
+        if (categoryFilter === 'all') return true;
+        return (scene.category || 'scenery') === categoryFilter;
+    });
 
     return (
         <div className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-amber-800/30 shadow-2xl">
@@ -37,9 +43,18 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
 
             {/* Interactive Markers */}
             <div className="absolute inset-0">
-                {TRAVEL_SCENES_INTERNATIONAL.map((scene) => {
+                {filteredScenes.map((scene) => {
                     const isSelected = selectedSceneId === scene.id;
                     const isHovered = hoveredId === scene.id;
+                    const isFood = scene.category === 'food';
+
+                    // Style constants based on type
+                    const primaryColor = isFood ? '#f97316' : '#fbbf24'; // Orange for food, Amber for scenery
+                    const pulseColor = isFood ? 'rgba(249, 115, 22, 0.3)' : 'rgba(251, 191, 36, 0.3)';
+                    const glowColor = isFood ? 'rgba(249, 115, 22, 0.5)' : 'rgba(251, 191, 36, 0.5)';
+                    const gradient = isFood
+                        ? (isSelected ? 'linear-gradient(135deg, #fb923c, #ea580c)' : 'linear-gradient(135deg, #f97316, #c2410c)')
+                        : (isSelected ? 'linear-gradient(135deg, #fbbf24, #d97706)' : 'linear-gradient(135deg, #f59e0b, #b45309)');
 
                     return (
                         <div
@@ -68,10 +83,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
                                 aria-label={t(scene.nameKey)}
                                 aria-pressed={isSelected}
                             >
-                                {/* Pulse animation for all markers */}
+                                {/* Pulse animation */}
                                 <span
-                                    className="absolute rounded-full bg-amber-500/30 animate-ping"
+                                    className="absolute rounded-full animate-ping"
                                     style={{
+                                        backgroundColor: pulseColor,
                                         width: isSelected ? '36px' : '24px',
                                         height: isSelected ? '36px' : '24px',
                                         animationDuration: isSelected ? '1s' : '2s'
@@ -85,7 +101,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
                                         style={{
                                             width: '32px',
                                             height: '32px',
-                                            backgroundColor: isSelected ? 'rgba(251, 191, 36, 0.5)' : 'rgba(251, 191, 36, 0.3)'
+                                            backgroundColor: glowColor
                                         }}
                                     />
                                 )}
@@ -96,28 +112,30 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
                                     style={{
                                         width: '20px',
                                         height: '20px',
-                                        background: isSelected
-                                            ? 'linear-gradient(135deg, #fbbf24, #d97706)'
-                                            : isHovered
-                                                ? 'linear-gradient(135deg, #f59e0b, #b45309)'
-                                                : 'linear-gradient(135deg, #374151, #1f2937)',
-                                        borderColor: isSelected ? '#ffffff' : isHovered ? '#fcd34d' : 'rgba(251, 191, 36, 0.5)',
+                                        background: isSelected || isHovered ? gradient : 'linear-gradient(135deg, #374151, #1f2937)',
+                                        borderColor: isSelected ? '#ffffff' : isHovered ? (isFood ? '#fdba74' : '#fcd34d') : (isFood ? 'rgba(249, 115, 22, 0.5)' : 'rgba(251, 191, 36, 0.5)'),
                                         boxShadow: isSelected
-                                            ? '0 0 20px rgba(251, 191, 36, 1)'
+                                            ? `0 0 20px ${primaryColor}`
                                             : isHovered
-                                                ? '0 0 15px rgba(245, 158, 11, 0.8)'
+                                                ? `0 0 15px ${primaryColor}`
                                                 : 'none'
                                     }}
                                 >
-                                    {/* Inner dot */}
-                                    <span
-                                        className="rounded-full"
-                                        style={{
-                                            width: '8px',
-                                            height: '8px',
-                                            backgroundColor: isSelected || isHovered ? '#ffffff' : 'rgba(251, 191, 36, 0.6)'
-                                        }}
-                                    />
+                                    {/* Icon or Inner dot */}
+                                    {isFood ? (
+                                        <span className="text-[10px] select-none" style={{ color: isSelected || isHovered ? '#fff' : 'rgba(249, 115, 22, 0.6)' }}>
+                                            🍜
+                                        </span>
+                                    ) : (
+                                        <span
+                                            className="rounded-full"
+                                            style={{
+                                                width: '8px',
+                                                height: '8px',
+                                                backgroundColor: isSelected || isHovered ? '#ffffff' : 'rgba(251, 191, 36, 0.6)'
+                                            }}
+                                        />
+                                    )}
                                 </span>
 
                                 {/* Tooltip */}
@@ -126,7 +144,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
                                     style={{
                                         transform: 'translateX(-50%)',
                                         background: 'linear-gradient(135deg, #1f2937, #111827)',
-                                        border: '1px solid rgba(251, 191, 36, 0.3)',
+                                        border: `1px solid ${isFood ? 'rgba(249, 115, 22, 0.3)' : 'rgba(251, 191, 36, 0.3)'}`,
                                         boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
                                         opacity: isHovered || isSelected ? 1 : 0,
                                         visibility: isHovered || isSelected ? 'visible' : 'hidden',
@@ -151,7 +169,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
                                         )}
                                         <div className="flex items-center gap-2 text-white text-sm font-semibold">
                                             <span
-                                                className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"
+                                                className={`w-2 h-2 rounded-full animate-pulse ${isFood ? 'bg-orange-400' : 'bg-amber-400'}`}
                                             />
                                             {t(scene.nameKey)}
                                         </div>
@@ -176,18 +194,20 @@ const WorldMap: React.FC<WorldMapProps> = ({ selectedSceneId, onSceneSelect }) =
             {/* Decorative corners */}
             <div className="absolute top-3 left-3 px-3 py-1.5 bg-gray-900/80 backdrop-blur-sm border border-amber-700/50 rounded-md pointer-events-none">
                 <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-xs text-gray-200 font-bold tracking-wider">WORLD MAP</span>
+                    <span className={`w-2 h-2 rounded-full animate-pulse ${categoryFilter === 'food' ? 'bg-orange-400' : 'bg-emerald-400'}`} />
+                    <span className="text-xs text-gray-200 font-bold tracking-wider uppercase">
+                        {categoryFilter === 'all' ? 'WORLD' : categoryFilter === 'food' ? 'GOURMET' : 'SCENERY'}
+                    </span>
                 </div>
             </div>
 
             <div className="absolute bottom-3 right-3 px-3 py-1.5 bg-gray-900/80 backdrop-blur-sm border border-amber-700/50 rounded-md pointer-events-none">
                 <div className="flex items-center gap-2">
-                    <svg className="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className={`w-3 h-3 ${categoryFilter === 'food' ? 'text-orange-400' : 'text-amber-400'}`} fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
                     <span className="text-xs text-gray-200 font-mono">
-                        <span className="font-bold text-amber-400">{TRAVEL_SCENES_INTERNATIONAL.length}</span> locations
+                        <span className={`font-bold ${categoryFilter === 'food' ? 'text-orange-400' : 'text-amber-400'}`}>{filteredScenes.length}</span> locations
                     </span>
                 </div>
             </div>
