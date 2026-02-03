@@ -71,14 +71,12 @@ const IdPhotoForm: React.FC<IdPhotoFormProps> = ({
               key={level.id}
               onClick={() => setIdPhotoRetouchLevel(level.id)}
               disabled={disabled}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                idPhotoRetouchLevel === level.id
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${idPhotoRetouchLevel === level.id
                   ? 'bg-emerald-600 text-white border border-emerald-500'
                   : 'bg-gray-800 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:border-gray-500'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {t(level.nameKey)}
-              {level.price != null && <span className="ml-1.5 opacity-80">({t('idphoto.price_hint')} ${level.price})</span>}
             </button>
           ))}
         </div>
@@ -91,11 +89,10 @@ const IdPhotoForm: React.FC<IdPhotoFormProps> = ({
               key={spec.id}
               onClick={() => setIdPhotoOutputSpec(spec.id)}
               disabled={disabled}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                idPhotoOutputSpec === spec.id
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${idPhotoOutputSpec === spec.id
                   ? 'bg-emerald-600 text-white border border-emerald-500'
                   : 'bg-gray-800 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:border-gray-500'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {t(spec.nameKey)}
             </button>
