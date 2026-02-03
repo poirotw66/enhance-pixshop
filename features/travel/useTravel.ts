@@ -37,11 +37,12 @@ export function useTravel() {
   const { t } = useLanguage();
   const settings = useSettings();
 
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [isGroupMode, setIsGroupMode] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [selectedSceneId, setSelectedSceneId] = useState<TravelSceneIdOrCustom>(TRAVEL_SCENES[0]?.id ?? 'shibuya');
   const [customSceneText, setCustomSceneText] = useState('');
   const [customSceneReferenceFile, setCustomSceneReferenceFile] = useState<File | null>(null);
@@ -53,8 +54,8 @@ export function useTravel() {
   const [useReferenceImage, setUseReferenceImage] = useState<boolean>(true);
 
   // New prompt injection state
-  const [weather, setWeather] = useState<TravelWeather>('sunny');
-  const [timeOfDay, setTimeOfDay] = useState<TravelTimeOfDay>('noon');
+  const [weather, setWeather] = useState<TravelWeather>('random');
+  const [timeOfDay, setTimeOfDay] = useState<TravelTimeOfDay>('random');
   const [vibe, setVibe] = useState<TravelVibe | 'none'>('none');
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -62,14 +63,14 @@ export function useTravel() {
   const [resultSceneCustomLabel, setResultSceneCustomLabel] = useState<string | null>(null);
 
   useEffect(() => {
-    if (file) {
-      const u = URL.createObjectURL(file);
-      setPreviewUrl(u);
-      return () => URL.revokeObjectURL(u);
+    if (files.length > 0) {
+      const urls = files.map(f => URL.createObjectURL(f));
+      setPreviewUrls(urls);
+      return () => urls.forEach(u => URL.revokeObjectURL(u));
     } else {
-      setPreviewUrl(null);
+      setPreviewUrls([]);
     }
-  }, [file]);
+  }, [files]);
 
   useEffect(() => {
     if (customSceneReferenceFile) {
@@ -97,18 +98,26 @@ export function useTravel() {
   }, [selectedSceneId, customSceneText]);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) {
-      setFile(f);
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length > 0) {
+      if (isGroupMode) {
+        setFiles(prev => [...prev, ...selectedFiles].slice(0, 4));
+      } else {
+        setFiles([selectedFiles[0]]);
+      }
       setResult(null);
       setError(null);
     }
     e.target.value = '';
+  }, [isGroupMode]);
+
+  const removeFile = useCallback((index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
   }, []);
 
   const handleGenerate = useCallback(async () => {
-    if (!file) {
-      setError(t('travel.error_no_image'));
+    if (files.length === 0) {
+      setError(t('travel.error_no_images'));
       return;
     }
     if (selectedSceneId === 'custom' && !customSceneText.trim() && !customSceneReferenceFile) {
@@ -195,18 +204,34 @@ export function useTravel() {
     try {
       // Enhance the prompt with dynamic variations and selected style/weather/time/vibe
       const stylePrompt = TRAVEL_STYLES.find(s => s.id === style)?.prompt || '';
-      const weatherPrompt = TRAVEL_WEATHER_OPTIONS.find(w => w.id === weather)?.prompt || '';
-      const timePrompt = TRAVEL_TIME_OPTIONS.find(t => t.id === timeOfDay)?.prompt || '';
+
+      // Handle random weather
+      let effectiveWeather = weather;
+      if (weather === 'random') {
+        const available = TRAVEL_WEATHER_OPTIONS.filter(w => w.id !== 'random');
+        effectiveWeather = available[Math.floor(Math.random() * available.length)].id;
+      }
+      const weatherPrompt = TRAVEL_WEATHER_OPTIONS.find(w => w.id === effectiveWeather)?.prompt || '';
+
+      // Handle random time
+      let effectiveTime = timeOfDay;
+      if (timeOfDay === 'random') {
+        const available = TRAVEL_TIME_OPTIONS.filter(t => t.id !== 'random');
+        effectiveTime = available[Math.floor(Math.random() * available.length)].id;
+      }
+      const timePrompt = TRAVEL_TIME_OPTIONS.find(t => t.id === effectiveTime)?.prompt || '';
+
       const vibePrompt = vibe !== 'none' ? TRAVEL_VIBE_OPTIONS.find(v => v.id === vibe)?.prompt || '' : '';
 
       const finalPrompt = generateDynamicTravelPrompt(scenePrompt, {
         style: stylePrompt,
         weather: weatherPrompt,
         time: timePrompt,
-        vibe: vibePrompt
+        vibe: vibePrompt,
+        isGroup: isGroupMode || files.length > 1
       });
 
-      const url = await generateTravelPhoto(file, {
+      const url = await generateTravelPhoto(isGroupMode ? files : files[0], {
         scenePrompt: finalPrompt,
         aspectRatio,
         imageSize,
@@ -222,7 +247,7 @@ export function useTravel() {
     } finally {
       setLoading(false);
     }
-  }, [file, selectedSceneId, customSceneText, customSceneReferenceFile, resolveScenePrompt, aspectRatio, imageSize, style, weather, timeOfDay, vibe, settings.apiKey, settings.model, t, useReferenceImage]);
+  }, [files, isGroupMode, selectedSceneId, customSceneText, customSceneReferenceFile, resolveScenePrompt, aspectRatio, imageSize, style, weather, timeOfDay, vibe, settings.apiKey, settings.model, t, useReferenceImage]);
 
   const handleDownload = useCallback(() => {
     if (!result) return;
@@ -238,11 +263,15 @@ export function useTravel() {
     setResultSceneCustomLabel(null);
   }, []);
 
-  const setFileFromDrop = useCallback((f: File) => {
-    setFile(f);
+  const setFilesFromDrop = useCallback((incoming: File[]) => {
+    if (isGroupMode) {
+      setFiles(prev => [...prev, ...incoming].slice(0, 4));
+    } else {
+      setFiles([incoming[0]]);
+    }
     setResult(null);
     setError(null);
-  }, []);
+  }, [isGroupMode]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -254,18 +283,23 @@ export function useTravel() {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDraggingOver(false);
-    const f = e.dataTransfer.files?.[0];
-    if (f) setFileFromDrop(f);
-  }, [setFileFromDrop]);
+    const incomingFiles = Array.from(e.dataTransfer.files).filter(f => (f as File).type.startsWith('image/')) as File[];
+    if (incomingFiles.length > 0) {
+      setFilesFromDrop(incomingFiles);
+    }
+  }, [setFilesFromDrop]);
 
   return {
-    file,
+    files,
+    isGroupMode,
+    setIsGroupMode,
+    removeFile,
     result,
     resultSceneNameKey,
     resultSceneCustomLabel,
     loading,
     error,
-    previewUrl,
+    previewUrls,
     selectedSceneId,
     setSelectedSceneId,
     customSceneText,
@@ -292,7 +326,7 @@ export function useTravel() {
     handleGenerate,
     handleDownload,
     clearResult,
-    setFileFromDrop,
+    setFilesFromDrop,
     handleDragOver,
     handleDragLeave,
     handleDrop,

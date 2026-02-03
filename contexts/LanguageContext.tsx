@@ -10,6 +10,7 @@ type Language = 'en' | 'zh-TW';
 const translations: Record<Language, Record<string, string>> = {
   en: {
     "app.title": "Pixshop",
+    "common.none": "None",
 
     "start.title_part1": "AI-Powered Photo Editor",
     "start.title_part2": "& Generator",
@@ -89,12 +90,14 @@ const translations: Record<Language, Record<string, string>> = {
     "travel.generating": "Generating travel photo...",
     "travel.result_scene_label": "Scene:",
 
+    "travel.weather.random": "Random",
     "travel.weather.sunny": "Sunny",
     "travel.weather.rainy": "Rainy",
     "travel.weather.snowy": "Snowy",
     "travel.weather.cloudy": "Cloudy",
     "travel.weather.misty": "Misty",
 
+    "travel.time.random": "Random",
     "travel.time.dawn": "Dawn",
     "travel.time.noon": "Noon",
     "travel.time.sunset": "Sunset",
@@ -109,6 +112,11 @@ const translations: Record<Language, Record<string, string>> = {
     "travel.vibe.cozy": "Cozy",
     "travel.vibe.futuristic": "Futuristic",
     "travel.vibe.romantic": "Romantic",
+    "travel.mode.single": "Single Person",
+    "travel.mode.group": "Group / Couple",
+    "travel.label.group_upload": "Upload Portraits (Max 4)",
+    "travel.error_no_images": "Please upload at least one person's photo",
+    "travel.status.group_analyzing": "Analyzing group features...",
 
     "travel.label.weather": "Weather",
     "travel.label.time": "Time",
@@ -443,6 +451,7 @@ const translations: Record<Language, Record<string, string>> = {
   },
   'zh-TW': {
     "app.title": "Pixshop",
+    "common.none": "無",
 
     "start.title_part1": "AI 驅動的照片編輯器",
     "start.title_part2": "& 生成器",
@@ -522,12 +531,14 @@ const translations: Record<Language, Record<string, string>> = {
     "travel.generating": "旅遊照生成中…",
     "travel.result_scene_label": "場景：",
 
+    "travel.weather.random": "隨機天氣",
     "travel.weather.sunny": "晴天",
     "travel.weather.rainy": "雨天",
     "travel.weather.snowy": "雪天",
     "travel.weather.cloudy": "多雲",
     "travel.weather.misty": "霧氣",
 
+    "travel.time.random": "隨機時段",
     "travel.time.dawn": "清晨",
     "travel.time.noon": "正午",
     "travel.time.sunset": "落日",
@@ -542,6 +553,11 @@ const translations: Record<Language, Record<string, string>> = {
     "travel.vibe.cozy": "溫馨",
     "travel.vibe.futuristic": "未來感",
     "travel.vibe.romantic": "浪漫",
+    "travel.mode.single": "個人旅拍",
+    "travel.mode.group": "多人合照",
+    "travel.label.group_upload": "上傳人物照片 (最多 4 人)",
+    "travel.error_no_images": "請至少挑選一張人物照片",
+    "travel.status.group_analyzing": "正在分析多位成員特徵...",
 
     "travel.label.weather": "天氣氣候",
     "travel.label.time": "時間時段",

@@ -131,7 +131,7 @@
 | **Taiwan (Central)** | `taichung_theater` | `travel.scene.theater` | 台中國家歌劇院 | `taichung_theater.jpg` | ✅ 已就緒 |
 | **Taiwan (Central)** | `rainbow_village` | `travel.scene.rainbow` | 彩虹眷村 | `rainbow_village.jpg` | ✅ 已就緒 |
 | **Taiwan (Central)** | `sunmoonlake` | `travel.scene.sunmoonlake` | 日月潭 | `sunmoonlake.jpg` | ✅ 已就緒 |
-| **Taiwan (Central)** | `qingjing` | `travel.scene.qingjing` | 清境農場 | `qingjing.jpg" | ✅ 已就緒 |
+| **Taiwan (Central)** | `qingjing` | `travel.scene.qingjing` | 清境農場 | `qingjing.jpg` | ✅ 已就緒 |
 | **Taiwan (Central)** | `hehuanshan` | `travel.scene.hehuanshan` | 合歡山 | `hehuanshan.jpg` | ✅ 已就緒 |
 | **Taiwan (Central)** | `lugang` | `travel.scene.lugang` | 鹿港老街 | `lugang.jpg` | ✅ 已就緒 |
 | **Taiwan (South)** | `alishan` | `travel.scene.alishan` | 阿里山 | `alishan.jpg` | ✅ 已就緒 |
@@ -143,7 +143,7 @@
 | **Taiwan (South)** | `formosa_boulevard` | `travel.scene.dome` | 美麗島光之穹頂 | `formosa_boulevard.jpg` | ✅ 已就緒 |
 | **Taiwan (South)** | `kenting` | `travel.scene.kenting` | 墾丁白沙灣 | `kenting.jpg` | ✅ 已就緒 |
 | **Taiwan (South)** | `eluanbi` | `travel.scene.eluanbi` | 鵝鑾鼻燈塔 | `eluanbi.jpg` | ✅ 已就緒 |
-| **Taiwan (East)** | `taroko` | `travel.scene.taroko" | 太魯閣峽谷 | `taroko.jpg` | ✅ 已就緒 |
+| **Taiwan (East)** | `taroko` | `travel.scene.taroko` | 太魯閣峽谷 | `taroko.jpg` | ✅ 已就緒 |
 | **Taiwan (East)** | `qingshui_cliff` | `travel.scene.qingshui` | 清水斷崖 | `qingshui_cliff.jpg` | ✅ 已就緒 |
 | **Taiwan (East)** | `mr_brown_ave` | `travel.scene.mrbrown` | 伯朗大道 | `mr_brown_ave.jpg` | ✅ 已就緒 |
 | **Taiwan (East)** | `sanxiantai` | `travel.scene.sanxiantai` | 三仙台 | `sanxiantai.jpg` | ✅ 已就緒 |

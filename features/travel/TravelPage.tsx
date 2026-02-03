@@ -183,8 +183,11 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
             {/* Upload section - full width in map view, sidebar in list view */}
             <div className={viewMode === 'map' ? 'w-full' : 'lg:sticky lg:top-4'}>
               <TravelUploadSection
-                file={tr.file}
-                previewUrl={tr.previewUrl}
+                files={tr.files}
+                previewUrls={tr.previewUrls}
+                isGroupMode={tr.isGroupMode}
+                setIsGroupMode={tr.setIsGroupMode}
+                removeFile={tr.removeFile}
                 error={tr.error}
                 loading={tr.loading}
                 isDraggingOver={tr.isDraggingOver}

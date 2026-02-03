@@ -289,9 +289,10 @@ export const TRAVEL_STYLES: { id: TravelStyle; nameKey: string; prompt: string }
 export const DEFAULT_TRAVEL_STYLE: TravelStyle = 'natural';
 
 /** Weather conditions for AI prompt injection */
-export type TravelWeather = 'sunny' | 'rainy' | 'snowy' | 'cloudy' | 'misty';
+export type TravelWeather = 'random' | 'sunny' | 'rainy' | 'snowy' | 'cloudy' | 'misty';
 
 export const TRAVEL_WEATHER_OPTIONS: { id: TravelWeather; nameKey: string; prompt: string; icon: string }[] = [
+  { id: 'random', nameKey: 'travel.weather.random', prompt: '', icon: '🎲' },
   { id: 'sunny', nameKey: 'travel.weather.sunny', prompt: 'sunny day, clear blue sky, bright sunlight', icon: '☀️' },
   { id: 'rainy', nameKey: 'travel.weather.rainy', prompt: 'rainy day, wet streets, rain droplets, raindrops on skin', icon: '🌧️' },
   { id: 'snowy', nameKey: 'travel.weather.snowy', prompt: 'snowing, snow-covered ground, winter atmosphere, snowflakes', icon: '❄️' },
@@ -300,9 +301,10 @@ export const TRAVEL_WEATHER_OPTIONS: { id: TravelWeather; nameKey: string; promp
 ];
 
 /** Time of day for AI prompt injection */
-export type TravelTimeOfDay = 'dawn' | 'noon' | 'sunset' | 'night';
+export type TravelTimeOfDay = 'random' | 'dawn' | 'noon' | 'sunset' | 'night';
 
 export const TRAVEL_TIME_OPTIONS: { id: TravelTimeOfDay; nameKey: string; prompt: string; icon: string }[] = [
+  { id: 'random', nameKey: 'travel.time.random', prompt: '', icon: '🎲' },
   { id: 'dawn', nameKey: 'travel.time.dawn', prompt: 'early morning, soft dawn light, pastel sky', icon: '🌅' },
   { id: 'noon', nameKey: 'travel.time.noon', prompt: 'midday, high sun, bright and vibrant colors', icon: '☀️' },
   { id: 'sunset', nameKey: 'travel.time.sunset', prompt: 'golden hour, orange and pink sky, long shadows', icon: '🌇' },
