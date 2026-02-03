@@ -21,8 +21,12 @@ interface TravelMapContainerProps {
     setVibe: (v: TravelVibe | 'none') => void;
     outfit: TravelOutfit;
     setOutfit: (v: TravelOutfit) => void;
+    customOutfitText: string;
+    setCustomOutfitText: (v: string) => void;
     pose: TravelPose;
     setPose: (v: TravelPose) => void;
+    customPoseText: string;
+    setCustomPoseText: (v: string) => void;
     framing: TravelFraming;
     setFraming: (v: TravelFraming) => void;
     outfitColor: string;
@@ -40,8 +44,10 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
     timeOfDay, setTimeOfDay,
     vibe, setVibe,
     outfit, setOutfit,
+    customOutfitText, setCustomOutfitText,
     outfitColor, setOutfitColor,
     pose, setPose,
+    customPoseText, setCustomPoseText,
     framing, setFraming,
     clearBackground, setClearBackground
 }) => {
@@ -223,7 +229,7 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
-                                            {TRAVEL_OUTFIT_OPTIONS.slice(0, 8).map((opt) => (
+                                            {TRAVEL_OUTFIT_OPTIONS.map((opt) => (
                                                 <button
                                                     key={opt.id}
                                                     onClick={() => setOutfit(opt.id)}
@@ -237,6 +243,17 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                                                 </button>
                                             ))}
                                         </div>
+                                        {outfit === 'custom' && (
+                                            <div className="mt-2 animate-fade-in">
+                                                <input
+                                                    type="text"
+                                                    value={customOutfitText}
+                                                    onChange={(e) => setCustomOutfitText(e.target.value)}
+                                                    placeholder={t('travel.outfit_custom_placeholder')}
+                                                    className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-2 py-1.5 text-xs text-gray-200 focus:outline-none focus:ring-1 focus:ring-green-500"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Pose & Framing */}
@@ -252,6 +269,17 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                                                     <option key={p.id} value={p.id}>{p.icon} {t(p.nameKey)}</option>
                                                 ))}
                                             </select>
+                                            {pose === 'custom' && (
+                                                <div className="mt-1.5 animate-fade-in">
+                                                    <input
+                                                        type="text"
+                                                        value={customPoseText}
+                                                        onChange={(e) => setCustomPoseText(e.target.value)}
+                                                        placeholder={t('travel.pose_custom_placeholder')}
+                                                        className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-2 py-1.5 text-xs text-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('travel.label.framing')}</label>
@@ -334,35 +362,37 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                         </div>
 
                         {/* Gourmet Description Card */}
-                        {isFood && scene.descriptionKey && (
-                            <div className="animate-slide-up flex flex-col sm:flex-row gap-4 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl backdrop-blur-md">
-                                {scene.referenceImagePath && (
-                                    <div className="w-full sm:w-32 aspect-square rounded-lg overflow-hidden border border-orange-500/20 shadow-lg flex-shrink-0 bg-gray-900">
-                                        <img
-                                            src={scene.referenceImagePath}
-                                            alt={name}
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).parentElement!.style.display = 'none';
-                                            }}
-                                        />
+                        {
+                            isFood && scene.descriptionKey && (
+                                <div className="animate-slide-up flex flex-col sm:flex-row gap-4 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl backdrop-blur-md">
+                                    {scene.referenceImagePath && (
+                                        <div className="w-full sm:w-32 aspect-square rounded-lg overflow-hidden border border-orange-500/20 shadow-lg flex-shrink-0 bg-gray-900">
+                                            <img
+                                                src={scene.referenceImagePath}
+                                                alt={name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).parentElement!.style.display = 'none';
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xl">🍜</span>
+                                            <h4 className="font-bold text-orange-400">{name}</h4>
+                                        </div>
+                                        <p className="text-sm text-gray-300 leading-relaxed italic">
+                                            「{t(scene.descriptionKey)}」
+                                        </p>
                                     </div>
-                                )}
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xl">🍜</span>
-                                        <h4 className="font-bold text-orange-400">{name}</h4>
-                                    </div>
-                                    <p className="text-sm text-gray-300 leading-relaxed italic">
-                                        「{t(scene.descriptionKey)}」
-                                    </p>
                                 </div>
-                            </div>
-                        )}
+                            )
+                        }
                     </div>
                 );
             })()}
-        </div>
+        </div >
     );
 };
 

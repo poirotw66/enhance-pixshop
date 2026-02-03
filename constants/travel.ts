@@ -334,7 +334,7 @@ export const TRAVEL_VIBE_OPTIONS: TravelVibeOption[] = [
 ];
 
 /** Outfit options for AI prompt injection */
-export type TravelOutfit = 'default' | 'casual' | 'formal' | 'traditional' | 'winter' | 'summer' | 'hiking' | 'cyberpunk' | 'luxury' | 'vintage' | 'street_chic' | 'preppy' | 'boho' | 'parisian' | 'academic' | 'y2k';
+export type TravelOutfit = 'default' | 'casual' | 'formal' | 'traditional' | 'winter' | 'summer' | 'hiking' | 'cyberpunk' | 'luxury' | 'vintage' | 'street_chic' | 'preppy' | 'boho' | 'parisian' | 'academic' | 'y2k' | 'custom';
 
 export const TRAVEL_OUTFIT_OPTIONS: { id: TravelOutfit; nameKey: string; prompt: string; icon: string }[] = [
   { id: 'default', nameKey: 'travel.outfit.default', prompt: '', icon: '🧥' },
@@ -351,6 +351,7 @@ export const TRAVEL_OUTFIT_OPTIONS: { id: TravelOutfit; nameKey: string; prompt:
   { id: 'summer', nameKey: 'travel.outfit.summer', prompt: 'wearing summer clothes, light summer dress, shorts and t-shirt, sunglasses', icon: '🕶️' },
   { id: 'hiking', nameKey: 'travel.outfit.hiking', prompt: 'wearing professional hiking gear, outdoor performance clothing, backpack', icon: '🥾' },
   { id: 'cyberpunk', nameKey: 'travel.outfit.cyberpunk', prompt: 'wearing techwear, cyberpunk fashion, neon accents, futuristic accessories', icon: '🧪' },
+  { id: 'custom', nameKey: 'travel.custom', prompt: '', icon: '✍️' },
 ];
 
 /** Relationship types for multi-person mode */
@@ -390,7 +391,7 @@ export const OUTFIT_COLOR_PRESETS = [
 ];
 
 /** Pose options for AI prompt injection */
-export type TravelPose = 'natural' | 'hugging' | 'jumping' | 'hand_in_hand' | 'pointing' | 'looking_at_each_other' | 'peace_sign' | 'walking_away' | 'sitting_relaxed' | 'candid_laugh' | 'leaning' | 'coffee_time' | 'adjusting_shades' | 'cafe_sitting' | 'photographer' | 'heart';
+export type TravelPose = 'natural' | 'hugging' | 'jumping' | 'hand_in_hand' | 'pointing' | 'looking_at_each_other' | 'peace_sign' | 'walking_away' | 'sitting_relaxed' | 'candid_laugh' | 'leaning' | 'coffee_time' | 'adjusting_shades' | 'cafe_sitting' | 'photographer' | 'heart' | 'custom';
 
 export const TRAVEL_POSE_OPTIONS: { id: TravelPose; nameKey: string; prompt: string; icon: string; minPeople?: number }[] = [
   { id: 'natural', nameKey: 'travel.pose.natural', prompt: 'standing naturally, relaxed pose', icon: '🚶' },
@@ -409,6 +410,7 @@ export const TRAVEL_POSE_OPTIONS: { id: TravelPose; nameKey: string; prompt: str
   { id: 'cafe_sitting', nameKey: 'travel.pose.cafe_sitting', prompt: 'sitting at a cafe table, relaxing, gourmet travel vibe, lifestyle look', icon: '🍴' },
   { id: 'photographer', nameKey: 'travel.pose.photographer', prompt: 'holding a camera as if taking a photo, traveler vibe, artistic lifestyle', icon: '📷' },
   { id: 'heart', nameKey: 'travel.pose.heart', prompt: 'making a heart sign with hands or fingers, cute and friendly pose', icon: '🫶' },
+  { id: 'custom', nameKey: 'travel.custom', prompt: '', icon: '✍️' },
 ];
 
 /** Recommended vibes for specific location types */

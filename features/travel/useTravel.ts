@@ -59,10 +59,27 @@ export function useTravel() {
   const [vibe, setVibe] = useState<TravelVibe | 'none'>('none');
   const [outfit, setOutfit] = useState<TravelOutfit>('default');
   const [outfitColor, setOutfitColor] = useState<string>('');
+  const [customOutfitText, setCustomOutfitText] = useState('');
   const [pose, setPose] = useState<TravelPose>('natural');
+  const [customPoseText, setCustomPoseText] = useState('');
   const [relationship, setRelationship] = useState<TravelRelationship>('default');
   const [framing, setFraming] = useState<TravelFraming>('default');
   const [clearBackground, setClearBackground] = useState<boolean>(false);
+
+  const [resultMetadata, setResultMetadata] = useState<{
+    outfit: TravelOutfit;
+    outfitColor: string;
+    customOutfitText?: string;
+    pose: TravelPose;
+    customPoseText?: string;
+    relationship: TravelRelationship;
+    weather: TravelWeather;
+    time: TravelTimeOfDay;
+    vibe: TravelVibe | 'none';
+    style: TravelStyle;
+    framing: TravelFraming;
+    clearBackground: boolean;
+  } | null>(null);
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [resultSceneNameKey, setResultSceneNameKey] = useState<string | null>(null);
@@ -237,8 +254,10 @@ export function useTravel() {
         time: timePrompt,
         vibe: vibePrompt,
         outfit: outfitPrompt,
+        customOutfitText: outfit === 'custom' ? customOutfitText : undefined,
         outfitColor: outfitColor,
         pose: posePrompt,
+        customPoseText: pose === 'custom' ? customPoseText : undefined,
         relationship: TRAVEL_RELATIONSHIP_OPTIONS.find(r => r.id === relationship)?.prompt || '',
         framing: TRAVEL_FRAMING_OPTIONS.find(f => f.id === framing)?.prompt || '',
         clearBackground: clearBackground,
@@ -255,6 +274,20 @@ export function useTravel() {
       setResult(url);
       setResultSceneNameKey(resolvedSceneNameKey);
       setResultSceneCustomLabel(resolvedSceneCustomLabel);
+      setResultMetadata({
+        outfit,
+        outfitColor,
+        customOutfitText: outfit === 'custom' ? customOutfitText : undefined,
+        pose,
+        customPoseText: pose === 'custom' ? customPoseText : undefined,
+        relationship,
+        weather: effectiveWeather,
+        time: effectiveTime,
+        vibe,
+        style,
+        framing,
+        clearBackground
+      });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'An unknown error occurred.';
       setError(`${t('travel.error_failed')} ${msg}`);
@@ -306,6 +339,7 @@ export function useTravel() {
     setResult(null);
     setResultSceneNameKey(null);
     setResultSceneCustomLabel(null);
+    setResultMetadata(null);
   }, []);
 
   const setFilesFromDrop = useCallback((incoming: File[]) => {
@@ -342,6 +376,7 @@ export function useTravel() {
     result,
     resultSceneNameKey,
     resultSceneCustomLabel,
+    resultMetadata,
     loading,
     error,
     previewUrls,
@@ -366,8 +401,12 @@ export function useTravel() {
     setVibe,
     outfit,
     setOutfit,
+    customOutfitText,
+    setCustomOutfitText,
     pose,
     setPose,
+    customPoseText,
+    setCustomPoseText,
     relationship,
     setRelationship,
     framing,

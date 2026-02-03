@@ -33,8 +33,12 @@ interface TravelFormProps {
   setVibe: (v: TravelVibe | 'none') => void;
   outfit: TravelOutfit;
   setOutfit: (v: TravelOutfit) => void;
+  customOutfitText: string;
+  setCustomOutfitText: (v: string) => void;
   pose: TravelPose;
   setPose: (v: TravelPose) => void;
+  customPoseText: string;
+  setCustomPoseText: (v: string) => void;
   relationship: TravelRelationship;
   setRelationship: (v: TravelRelationship) => void;
   framing: TravelFraming;
@@ -103,10 +107,14 @@ const TravelForm: React.FC<TravelFormProps> = ({
   setVibe,
   outfit,
   setOutfit,
+  customOutfitText,
+  setCustomOutfitText,
   outfitColor,
   setOutfitColor,
   pose,
   setPose,
+  customPoseText,
+  setCustomPoseText,
   relationship,
   setRelationship,
   framing,
@@ -196,6 +204,19 @@ const TravelForm: React.FC<TravelFormProps> = ({
               ))}
             </div>
 
+            {outfit === 'custom' && (
+              <div className="pt-1 animate-fade-in">
+                <input
+                  type="text"
+                  value={customOutfitText}
+                  onChange={(e) => setCustomOutfitText(e.target.value)}
+                  placeholder={t('travel.outfit_custom_placeholder')}
+                  disabled={disabled}
+                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:ring-1 focus:ring-green-500"
+                />
+              </div>
+            )}
+
             <div className="pt-2 space-y-2">
               <label className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">{t('travel.label.outfit_color')}</label>
               <div className="flex flex-wrap gap-2">
@@ -255,6 +276,19 @@ const TravelForm: React.FC<TravelFormProps> = ({
                 </button>
               ))}
             </div>
+
+            {pose === 'custom' && (
+              <div className="pt-1 animate-fade-in">
+                <input
+                  type="text"
+                  value={customPoseText}
+                  onChange={(e) => setCustomPoseText(e.target.value)}
+                  placeholder={t('travel.pose_custom_placeholder')}
+                  disabled={disabled}
+                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

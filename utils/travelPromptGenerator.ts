@@ -48,7 +48,9 @@ interface PromptOptions {
     outfit?: string;
     outfitColor?: string;
     pose?: string;
+    customPoseText?: string;
     relationship?: string;
+    customOutfitText?: string;
     framing?: string;
     clearBackground?: boolean;
     isGroup?: boolean;
@@ -70,14 +72,14 @@ export function generateDynamicTravelPrompt(baseScenePrompt: string, options: Pr
 
     const lighting = opt.style || opt.time || opt.weather ? '' : getRandomElement(LIGHTING_CONDITIONS);
     const angle = opt.framing ? opt.framing : getRandomElement(CAMERA_ANGLES);
-    const action = opt.pose ? opt.pose : getRandomElement(POSES_AND_ACTIONS);
+    const action = opt.customPoseText ? opt.customPoseText : (opt.pose ? opt.pose : getRandomElement(POSES_AND_ACTIONS));
     const style = opt.style || getRandomElement(VISUAL_STYLES);
     const weather = opt.weather ? opt.weather + ',' : '';
     const time = opt.time ? opt.time + ',' : '';
     const vibe = opt.vibe ? opt.vibe + ',' : '';
 
     // Outfit color logic
-    let outfit = opt.outfit || 'fashionable outfit';
+    let outfit = opt.customOutfitText ? opt.customOutfitText : (opt.outfit || 'fashionable outfit');
     if (opt.outfitColor) {
         outfit = `${outfit} in ${opt.outfitColor}`;
     }
@@ -94,7 +96,7 @@ export function generateDynamicTravelPrompt(baseScenePrompt: string, options: Pr
     }
 
     const groupAction = opt.isGroup
-        ? (opt.pose ? opt.pose : 'standing together, laughing and interacting naturally with genuine expressions')
+        ? (opt.customPoseText ? opt.customPoseText : (opt.pose ? opt.pose : 'standing together, laughing and interacting naturally with genuine expressions'))
         : action;
 
     const backgroundMod = opt.clearBackground ? 'clean background, exclusive private view, no other tourists or background people,' : '';

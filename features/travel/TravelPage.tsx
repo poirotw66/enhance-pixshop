@@ -69,6 +69,7 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
             result={tr.result}
             resultSceneNameKey={tr.resultSceneNameKey}
             resultSceneCustomLabel={tr.resultSceneCustomLabel}
+            resultMetadata={tr.resultMetadata}
             onDownload={tr.handleDownload}
             onAgain={tr.clearResult}
             onEditInEditor={handleEditInEditor}
@@ -125,12 +126,16 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                     setVibe={tr.setVibe}
                     outfit={tr.outfit}
                     setOutfit={tr.setOutfit}
-                    outfitColor={tr.outfitColor}
-                    setOutfitColor={tr.setOutfitColor}
+                    customOutfitText={tr.customOutfitText}
+                    setCustomOutfitText={tr.setCustomOutfitText}
                     pose={tr.pose}
                     setPose={tr.setPose}
+                    customPoseText={tr.customPoseText}
+                    setCustomPoseText={tr.setCustomPoseText}
                     framing={tr.framing}
                     setFraming={tr.setFraming}
+                    outfitColor={tr.outfitColor}
+                    setOutfitColor={tr.setOutfitColor}
                     clearBackground={tr.clearBackground}
                     setClearBackground={tr.setClearBackground}
                   />
@@ -157,10 +162,14 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                     setVibe={tr.setVibe}
                     outfit={tr.outfit}
                     setOutfit={tr.setOutfit}
+                    customOutfitText={tr.customOutfitText}
+                    setCustomOutfitText={tr.setCustomOutfitText}
                     outfitColor={tr.outfitColor}
                     setOutfitColor={tr.setOutfitColor}
                     pose={tr.pose}
                     setPose={tr.setPose}
+                    customPoseText={tr.customPoseText}
+                    setCustomPoseText={tr.setCustomPoseText}
                     relationship={tr.relationship}
                     setRelationship={tr.setRelationship}
                     framing={tr.framing}
@@ -197,10 +206,14 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                   setVibe={tr.setVibe}
                   outfit={tr.outfit}
                   setOutfit={tr.setOutfit}
+                  customOutfitText={tr.customOutfitText}
+                  setCustomOutfitText={tr.setCustomOutfitText}
                   outfitColor={tr.outfitColor}
                   setOutfitColor={tr.setOutfitColor}
                   pose={tr.pose}
                   setPose={tr.setPose}
+                  customPoseText={tr.customPoseText}
+                  setCustomPoseText={tr.setCustomPoseText}
                   relationship={tr.relationship}
                   setRelationship={tr.setRelationship}
                   framing={tr.framing}
