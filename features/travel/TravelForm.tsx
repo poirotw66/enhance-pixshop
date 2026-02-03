@@ -6,8 +6,8 @@
 import React from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSettings } from '../../contexts/SettingsContext';
-import { TRAVEL_SCENES_INTERNATIONAL, TRAVEL_SCENES_TAIWAN, TRAVEL_SCENE_ID_RANDOM, TRAVEL_ASPECT_RATIOS, TRAVEL_IMAGE_SIZES, TRAVEL_STYLES, TRAVEL_WEATHER_OPTIONS, TRAVEL_TIME_OPTIONS, TRAVEL_VIBE_OPTIONS } from '../../constants/travel';
-import type { TravelAspectRatio, TravelImageSize, TravelStyle, TravelWeather, TravelTimeOfDay, TravelVibe } from '../../constants/travel';
+import { TRAVEL_SCENES_INTERNATIONAL, TRAVEL_SCENES_TAIWAN, TRAVEL_SCENE_ID_RANDOM, TRAVEL_ASPECT_RATIOS, TRAVEL_IMAGE_SIZES, TRAVEL_STYLES, TRAVEL_WEATHER_OPTIONS, TRAVEL_TIME_OPTIONS, TRAVEL_VIBE_OPTIONS, TRAVEL_OUTFIT_OPTIONS, TRAVEL_POSE_OPTIONS } from '../../constants/travel';
+import type { TravelAspectRatio, TravelImageSize, TravelStyle, TravelWeather, TravelTimeOfDay, TravelVibe, TravelOutfit, TravelPose } from '../../constants/travel';
 
 const IS_PRO = (m: string) => m === 'gemini-3-pro-image-preview';
 
@@ -31,6 +31,10 @@ interface TravelFormProps {
   setTimeOfDay: (v: TravelTimeOfDay) => void;
   vibe: TravelVibe | 'none';
   setVibe: (v: TravelVibe | 'none') => void;
+  outfit: TravelOutfit;
+  setOutfit: (v: TravelOutfit) => void;
+  pose: TravelPose;
+  setPose: (v: TravelPose) => void;
   useReferenceImage: boolean;
   setUseReferenceImage: (v: boolean) => void;
   disabled?: boolean;
@@ -88,6 +92,10 @@ const TravelForm: React.FC<TravelFormProps> = ({
   setTimeOfDay,
   vibe,
   setVibe,
+  outfit,
+  setOutfit,
+  pose,
+  setPose,
   useReferenceImage,
   setUseReferenceImage,
   disabled = false,
@@ -203,6 +211,40 @@ const TravelForm: React.FC<TravelFormProps> = ({
                   >
                     <span className="mr-2">{v.icon}</span>
                     {t(v.nameKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">{t('travel.label.outfit')}</label>
+              <div className="flex flex-wrap gap-2">
+                {TRAVEL_OUTFIT_OPTIONS.map((o) => (
+                  <button
+                    key={o.id}
+                    onClick={() => setOutfit(o.id)}
+                    disabled={disabled}
+                    className={`${SCENE_BTN} ${outfit === o.id ? 'bg-green-600 text-white border-green-500' : SCENE_INACTIVE}`}
+                  >
+                    <span className="mr-2">{o.icon}</span>
+                    {t(o.nameKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">{t('travel.label.pose')}</label>
+              <div className="flex flex-wrap gap-2">
+                {TRAVEL_POSE_OPTIONS.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setPose(p.id)}
+                    disabled={disabled}
+                    className={`${SCENE_BTN} ${pose === p.id ? 'bg-rose-600 text-white border-rose-500' : SCENE_INACTIVE}`}
+                  >
+                    <span className="mr-2">{p.icon}</span>
+                    {t(p.nameKey)}
                   </button>
                 ))}
               </div>

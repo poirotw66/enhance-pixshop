@@ -8,7 +8,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { TravelSceneCategory } from '../../constants/travel';
 import WorldMap from './WorldMap';
 import TaiwanMap from './TaiwanMap';
-import { TRAVEL_SCENES_INTERNATIONAL, TRAVEL_SCENES_TAIWAN, TRAVEL_WEATHER_OPTIONS, TRAVEL_TIME_OPTIONS, TRAVEL_VIBE_OPTIONS, LOCATION_RECOMMENDED_VIBES, TravelWeather, TravelTimeOfDay, TravelVibe } from '../../constants/travel';
+import { TRAVEL_SCENES_INTERNATIONAL, TRAVEL_SCENES_TAIWAN, TRAVEL_WEATHER_OPTIONS, TRAVEL_TIME_OPTIONS, TRAVEL_VIBE_OPTIONS, TRAVEL_OUTFIT_OPTIONS, TRAVEL_POSE_OPTIONS, LOCATION_RECOMMENDED_VIBES, TravelWeather, TravelTimeOfDay, TravelVibe, TravelOutfit, TravelPose } from '../../constants/travel';
 
 interface TravelMapContainerProps {
     selectedSceneId: string;
@@ -19,6 +19,10 @@ interface TravelMapContainerProps {
     setTimeOfDay: (t: TravelTimeOfDay) => void;
     vibe: TravelVibe | 'none';
     setVibe: (v: TravelVibe | 'none') => void;
+    outfit: TravelOutfit;
+    setOutfit: (v: TravelOutfit) => void;
+    pose: TravelPose;
+    setPose: (v: TravelPose) => void;
 }
 
 type MapType = 'world' | 'taiwan';
@@ -28,7 +32,9 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
     selectedSceneId, onSceneSelect,
     weather, setWeather,
     timeOfDay, setTimeOfDay,
-    vibe, setVibe
+    vibe, setVibe,
+    outfit, setOutfit,
+    pose, setPose
 }) => {
     const { t } = useLanguage();
     const [mapType, setMapType] = useState<MapType>('world');
@@ -151,8 +157,8 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                                                     key={opt.id}
                                                     onClick={() => setWeather(opt.id)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2 border ${weather === opt.id
-                                                            ? 'bg-blue-600/20 border-blue-500/50 text-blue-200 shadow-[0_0_10px_rgba(59,130,246,0.2)]'
-                                                            : 'bg-gray-800/40 border-gray-700/50 text-gray-400 hover:border-gray-600'
+                                                        ? 'bg-blue-600/20 border-blue-500/50 text-blue-200 shadow-[0_0_10px_rgba(59,130,246,0.2)]'
+                                                        : 'bg-gray-800/40 border-gray-700/50 text-gray-400 hover:border-gray-600'
                                                         }`}
                                                 >
                                                     <span>{opt.icon}</span>
@@ -173,8 +179,57 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                                                     key={opt.id}
                                                     onClick={() => setTimeOfDay(opt.id)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2 border ${timeOfDay === opt.id
-                                                            ? 'bg-amber-600/20 border-amber-500/50 text-amber-200 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                                                            : 'bg-gray-800/40 border-gray-700/50 text-gray-400 hover:border-gray-600'
+                                                        ? 'bg-amber-600/20 border-amber-500/50 text-amber-200 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                                                        : 'bg-gray-800/40 border-gray-700/50 text-gray-400 hover:border-gray-600'
+                                                        }`}
+                                                >
+                                                    <span>{opt.icon}</span>
+                                                    <span>{t(opt.nameKey)}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Outfit & Pose */}
+                            <div className="flex flex-col gap-3 bg-gray-900/40 p-4 rounded-xl border border-gray-700/30 backdrop-blur-sm">
+                                <div className="flex flex-col gap-4">
+                                    {/* Outfit */}
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                            <span>{t('travel.label.outfit')}</span>
+                                        </label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {TRAVEL_OUTFIT_OPTIONS.map((opt) => (
+                                                <button
+                                                    key={opt.id}
+                                                    onClick={() => setOutfit(opt.id)}
+                                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2 border ${outfit === opt.id
+                                                        ? 'bg-green-600/20 border-green-500/50 text-green-200 shadow-[0_0_10px_rgba(34,197,94,0.2)]'
+                                                        : 'bg-gray-800/40 border-gray-700/50 text-gray-400 hover:border-gray-600'
+                                                        }`}
+                                                >
+                                                    <span>{opt.icon}</span>
+                                                    <span>{t(opt.nameKey)}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Pose */}
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                            <span>{t('travel.label.pose')}</span>
+                                        </label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {TRAVEL_POSE_OPTIONS.map((opt) => (
+                                                <button
+                                                    key={opt.id}
+                                                    onClick={() => setPose(opt.id)}
+                                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2 border ${pose === opt.id
+                                                        ? 'bg-rose-600/20 border-rose-500/50 text-rose-200 shadow-[0_0_10px_rgba(225,29,72,0.2)]'
+                                                        : 'bg-gray-800/40 border-gray-700/50 text-gray-400 hover:border-gray-600'
                                                         }`}
                                                 >
                                                     <span>{opt.icon}</span>
@@ -187,7 +242,7 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                             </div>
 
                             {/* Vibes */}
-                            <div className="flex flex-col gap-3 bg-gray-900/40 p-4 rounded-xl border border-gray-700/30 backdrop-blur-sm">
+                            <div className="flex flex-col gap-3 bg-gray-900/40 p-4 rounded-xl border border-gray-700/30 backdrop-blur-sm md:col-span-2">
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -209,8 +264,8 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                                                     <button
                                                         onClick={() => setVibe('none')}
                                                         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2 border ${vibe === 'none'
-                                                                ? 'bg-gray-600/20 border-gray-500/50 text-gray-200'
-                                                                : 'bg-gray-800/40 border-gray-700/50 text-gray-400'
+                                                            ? 'bg-gray-600/20 border-gray-500/50 text-gray-200'
+                                                            : 'bg-gray-800/40 border-gray-700/50 text-gray-400'
                                                             }`}
                                                     >
                                                         ✨ {t('common.none') || 'Default'}
@@ -220,10 +275,10 @@ const TravelMapContainer: React.FC<TravelMapContainerProps> = ({
                                                             key={opt.id}
                                                             onClick={() => setVibe(opt.id)}
                                                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2 border ${vibe === opt.id
-                                                                    ? 'bg-purple-600/20 border-purple-500/50 text-purple-200 shadow-[0_0_10px_rgba(147,51,234,0.2)]'
-                                                                    : recommendedIds.includes(opt.id)
-                                                                        ? 'bg-indigo-900/20 border-indigo-700/30 text-indigo-300'
-                                                                        : 'bg-gray-800/40 border-gray-700/50 text-gray-400'
+                                                                ? 'bg-purple-600/20 border-purple-500/50 text-purple-200 shadow-[0_0_10px_rgba(147,51,234,0.2)]'
+                                                                : recommendedIds.includes(opt.id)
+                                                                    ? 'bg-indigo-900/20 border-indigo-700/30 text-indigo-300'
+                                                                    : 'bg-gray-800/40 border-gray-700/50 text-gray-400'
                                                                 }`}
                                                         >
                                                             <span>{opt.icon}</span>

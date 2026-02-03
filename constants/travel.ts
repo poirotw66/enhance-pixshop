@@ -333,6 +333,34 @@ export const TRAVEL_VIBE_OPTIONS: TravelVibeOption[] = [
   { id: 'romantic', nameKey: 'travel.vibe.romantic', prompt: 'romantic atmosphere, soft focus, warm heart-felt lighting', icon: '💖' },
 ];
 
+/** Outfit options for AI prompt injection */
+export type TravelOutfit = 'default' | 'casual' | 'formal' | 'traditional' | 'winter' | 'summer' | 'hiking' | 'cyberpunk';
+
+export const TRAVEL_OUTFIT_OPTIONS: { id: TravelOutfit; nameKey: string; prompt: string; icon: string }[] = [
+  { id: 'default', nameKey: 'travel.outfit.default', prompt: '', icon: '🧥' },
+  { id: 'casual', nameKey: 'travel.outfit.casual', prompt: 'wearing casual clothes, t-shirt and jeans, comfortable street wear', icon: '👕' },
+  { id: 'formal', nameKey: 'travel.outfit.formal', prompt: 'wearing formal attire, elegant suit for men, sophisticated dress for women, black tie style', icon: '👔' },
+  { id: 'traditional', nameKey: 'travel.outfit.traditional', prompt: 'wearing traditional ethnic clothing matching the local culture, high quality traditional garments', icon: '👘' },
+  { id: 'winter', nameKey: 'travel.outfit.winter', prompt: 'wearing winter clothes, warm down jacket, scarf, gloves, beanie', icon: '🧥' },
+  { id: 'summer', nameKey: 'travel.outfit.summer', prompt: 'wearing summer clothes, light summer dress, shorts and t-shirt, sunglasses', icon: '🕶️' },
+  { id: 'hiking', nameKey: 'travel.outfit.hiking', prompt: 'wearing professional hiking gear, outdoor performance clothing, backpack', icon: '🥾' },
+  { id: 'cyberpunk', nameKey: 'travel.outfit.cyberpunk', prompt: 'wearing techwear, cyberpunk fashion, neon accents, futuristic accessories', icon: '🧪' },
+];
+
+/** Pose options for AI prompt injection */
+export type TravelPose = 'natural' | 'hugging' | 'jumping' | 'hand_in_hand' | 'pointing' | 'looking_at_each_other' | 'peace_sign' | 'walking_away';
+
+export const TRAVEL_POSE_OPTIONS: { id: TravelPose; nameKey: string; prompt: string; icon: string; minPeople?: number }[] = [
+  { id: 'natural', nameKey: 'travel.pose.natural', prompt: 'standing naturally, relaxed pose', icon: '🚶' },
+  { id: 'hugging', nameKey: 'travel.pose.hugging', prompt: 'hugging each other warmly, showing affection', icon: '🫂', minPeople: 2 },
+  { id: 'jumping', nameKey: 'travel.pose.jumping', prompt: 'jumping in the air with joy, mid-air pose, arms raised', icon: '🤸' },
+  { id: 'hand_in_hand', nameKey: 'travel.pose.hand_in_hand', prompt: 'holding hands, walking or standing together', icon: '🤝', minPeople: 2 },
+  { id: 'pointing', nameKey: 'travel.pose.pointing', prompt: 'pointing towards the landmark or scenery in the background', icon: '👉' },
+  { id: 'looking_at_each_other', nameKey: 'travel.pose.looking_at_each_other', prompt: 'looking at each other and smiling, eye contact', icon: '👀', minPeople: 2 },
+  { id: 'peace_sign', nameKey: 'travel.pose.peace_sign', prompt: 'making a peace sign (V-sign) with hand, smiling at camera', icon: '✌️' },
+  { id: 'walking_away', nameKey: 'travel.pose.walking_away', prompt: 'walking away from the camera, back view, looking towards the horizon', icon: '🚶‍♀️' },
+];
+
 /** Recommended vibes for specific location types */
 export const LOCATION_RECOMMENDED_VIBES: Record<string, TravelVibe[]> = {
   // Cities

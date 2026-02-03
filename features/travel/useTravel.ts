@@ -9,8 +9,8 @@ import { generateTravelPhoto, generateOptimizedPrompt } from '../../services/gem
 import { generateDynamicTravelPrompt } from '../../utils/travelPromptGenerator';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { TRAVEL_SCENES, TRAVEL_SCENE_ID_RANDOM, pickRandomTravelScene, DEFAULT_TRAVEL_ASPECT, DEFAULT_TRAVEL_IMAGE_SIZE, TRAVEL_STYLES, DEFAULT_TRAVEL_STYLE, TRAVEL_WEATHER_OPTIONS, TRAVEL_TIME_OPTIONS, TRAVEL_VIBE_OPTIONS } from '../../constants/travel';
-import type { TravelAspectRatio, TravelImageSize, TravelStyle, TravelWeather, TravelTimeOfDay, TravelVibe } from '../../constants/travel';
+import { TRAVEL_SCENES, TRAVEL_SCENE_ID_RANDOM, pickRandomTravelScene, DEFAULT_TRAVEL_ASPECT, DEFAULT_TRAVEL_IMAGE_SIZE, TRAVEL_STYLES, DEFAULT_TRAVEL_STYLE, TRAVEL_WEATHER_OPTIONS, TRAVEL_TIME_OPTIONS, TRAVEL_VIBE_OPTIONS, TRAVEL_OUTFIT_OPTIONS, TRAVEL_POSE_OPTIONS } from '../../constants/travel';
+import type { TravelAspectRatio, TravelImageSize, TravelStyle, TravelWeather, TravelTimeOfDay, TravelVibe, TravelOutfit, TravelPose } from '../../constants/travel';
 
 export type TravelSceneIdOrCustom = string;
 
@@ -57,6 +57,8 @@ export function useTravel() {
   const [weather, setWeather] = useState<TravelWeather>('random');
   const [timeOfDay, setTimeOfDay] = useState<TravelTimeOfDay>('random');
   const [vibe, setVibe] = useState<TravelVibe | 'none'>('none');
+  const [outfit, setOutfit] = useState<TravelOutfit>('default');
+  const [pose, setPose] = useState<TravelPose>('natural');
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [resultSceneNameKey, setResultSceneNameKey] = useState<string | null>(null);
@@ -222,12 +224,16 @@ export function useTravel() {
       const timePrompt = TRAVEL_TIME_OPTIONS.find(t => t.id === effectiveTime)?.prompt || '';
 
       const vibePrompt = vibe !== 'none' ? TRAVEL_VIBE_OPTIONS.find(v => v.id === vibe)?.prompt || '' : '';
+      const outfitPrompt = TRAVEL_OUTFIT_OPTIONS.find(o => o.id === outfit)?.prompt || '';
+      const posePrompt = TRAVEL_POSE_OPTIONS.find(p => p.id === pose)?.prompt || '';
 
       const finalPrompt = generateDynamicTravelPrompt(scenePrompt, {
         style: stylePrompt,
         weather: weatherPrompt,
         time: timePrompt,
         vibe: vibePrompt,
+        outfit: outfitPrompt,
+        pose: posePrompt,
         isGroup: isGroupMode || files.length > 1
       });
 
@@ -319,6 +325,10 @@ export function useTravel() {
     setTimeOfDay,
     vibe,
     setVibe,
+    outfit,
+    setOutfit,
+    pose,
+    setPose,
     useReferenceImage,
     setUseReferenceImage,
     isDraggingOver,

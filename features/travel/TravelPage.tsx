@@ -123,6 +123,10 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                     setTimeOfDay={tr.setTimeOfDay}
                     vibe={tr.vibe}
                     setVibe={tr.setVibe}
+                    outfit={tr.outfit}
+                    setOutfit={tr.setOutfit}
+                    pose={tr.pose}
+                    setPose={tr.setPose}
                   />
                   {/* Show settings below map */}
                   <TravelForm
@@ -145,6 +149,10 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                     setTimeOfDay={tr.setTimeOfDay}
                     vibe={tr.vibe}
                     setVibe={tr.setVibe}
+                    outfit={tr.outfit}
+                    setOutfit={tr.setOutfit}
+                    pose={tr.pose}
+                    setPose={tr.setPose}
                     useReferenceImage={tr.useReferenceImage}
                     setUseReferenceImage={tr.setUseReferenceImage}
                     disabled={tr.loading}
@@ -172,6 +180,10 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
                   setTimeOfDay={tr.setTimeOfDay}
                   vibe={tr.vibe}
                   setVibe={tr.setVibe}
+                  outfit={tr.outfit}
+                  setOutfit={tr.setOutfit}
+                  pose={tr.pose}
+                  setPose={tr.setPose}
                   useReferenceImage={tr.useReferenceImage}
                   setUseReferenceImage={tr.setUseReferenceImage}
                   disabled={tr.loading}

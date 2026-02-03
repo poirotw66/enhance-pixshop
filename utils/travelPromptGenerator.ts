@@ -45,6 +45,8 @@ interface PromptOptions {
     weather?: string;
     time?: string;
     vibe?: string;
+    outfit?: string;
+    pose?: string;
     isGroup?: boolean;
 }
 
@@ -69,20 +71,23 @@ export function generateDynamicTravelPrompt(baseScenePrompt: string, options: Pr
     const weather = opt.weather ? opt.weather + ',' : '';
     const time = opt.time ? opt.time + ',' : '';
     const vibe = opt.vibe ? opt.vibe + ',' : '';
+    const outfit = opt.outfit ? opt.outfit + ',' : '';
+    const pose = opt.pose ? opt.pose + ',' : '';
 
     const subject = opt.isGroup
         ? 'a travel photo of a group of people, preserve identities of all people from the reference photos, they are friends or family traveling together'
         : 'a travel photo of the same person, preserve identity, same face';
 
     const groupAction = opt.isGroup
-        ? 'standing together, laughing and interacting naturally'
-        : action;
+        ? (opt.pose ? opt.pose : 'standing together, laughing and interacting naturally')
+        : (opt.pose ? opt.pose : action);
 
     // Construct the "Positive" prompt
-    // Structure: Subject + Action + Scene + Weather + Time + Vibe + Lighting + Camera + Style
+    // Structure: Subject + Action + Scene + Outfit + Weather + Time + Vibe + Lighting + Camera + Style
     return `${subject},
     ${groupAction},
     ${baseScenePrompt},
+    ${outfit}
     ${weather}
     ${time}
     ${vibe}
