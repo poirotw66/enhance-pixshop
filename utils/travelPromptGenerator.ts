@@ -54,6 +54,7 @@ interface PromptOptions {
     framing?: string;
     clearBackground?: boolean;
     isGroup?: boolean;
+    variationIndex?: number; // For generating different variations of the same prompt
 }
 
 /**
@@ -70,10 +71,13 @@ export function generateDynamicTravelPrompt(baseScenePrompt: string, options: Pr
         opt = options;
     }
 
-    const lighting = opt.style || opt.time || opt.weather ? '' : getRandomElement(LIGHTING_CONDITIONS);
-    const angle = opt.framing ? opt.framing : getRandomElement(CAMERA_ANGLES);
-    const action = opt.customPoseText ? opt.customPoseText : (opt.pose ? opt.pose : getRandomElement(POSES_AND_ACTIONS));
-    const style = opt.style || getRandomElement(VISUAL_STYLES);
+    // Use variationIndex to create deterministic but different variations
+    const variationSeed = opt.variationIndex !== undefined ? opt.variationIndex : Math.floor(Math.random() * 1000);
+    
+    const lighting = opt.style || opt.time || opt.weather ? '' : LIGHTING_CONDITIONS[variationSeed % LIGHTING_CONDITIONS.length];
+    const angle = opt.framing ? opt.framing : CAMERA_ANGLES[variationSeed % CAMERA_ANGLES.length];
+    const action = opt.customPoseText ? opt.customPoseText : (opt.pose ? opt.pose : POSES_AND_ACTIONS[variationSeed % POSES_AND_ACTIONS.length]);
+    const style = opt.style || VISUAL_STYLES[variationSeed % VISUAL_STYLES.length];
     const weather = opt.weather ? opt.weather + ',' : '';
     const time = opt.time ? opt.time + ',' : '';
     const vibe = opt.vibe ? opt.vibe + ',' : '';
@@ -101,8 +105,28 @@ export function generateDynamicTravelPrompt(baseScenePrompt: string, options: Pr
 
     const backgroundMod = opt.clearBackground ? 'clean background, exclusive private view, no other tourists or background people,' : '';
 
+    // Add variation-specific modifiers for more diversity
+    const variationModifiers = [
+        'unique composition,',
+        'distinctive framing,',
+        'varied perspective,',
+        'different camera position,',
+        'alternative angle,',
+    ];
+    const variationModifier = variationModifiers[variationSeed % variationModifiers.length];
+
+    // Add subtle random details for more variation
+    const detailVariations = [
+        'natural expressions, authentic moment,',
+        'spontaneous pose, candid photography,',
+        'dynamic composition, engaging scene,',
+        'artistic framing, creative angle,',
+        'unique moment captured,',
+    ];
+    const detailVariation = detailVariations[variationSeed % detailVariations.length];
+
     // Construct the "Positive" prompt
-    // Structure: Subject + Action + Scene + Outfit + Weather + Time + Vibe + Lighting + Camera + Style
+    // Structure: Subject + Action + Scene + Outfit + Weather + Time + Vibe + Lighting + Camera + Style + Variations
     return `Exquisite ${subject},
     ${groupAction},
     ${baseScenePrompt},
@@ -113,6 +137,8 @@ export function generateDynamicTravelPrompt(baseScenePrompt: string, options: Pr
     ${vibe}
     ${lighting ? lighting + ',' : ''}
     ${angle},
+    ${variationModifier}
+    ${detailVariation}
     ${style},
     high-end fashion aesthetic, masterpiece photography, meticulous facial details, sharp focus on pupils, realistic skin texture with subsurface scattering, 8k resolution, professionally color graded`;
 }

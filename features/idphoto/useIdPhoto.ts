@@ -103,17 +103,18 @@ export function useIdPhoto() {
         });
       }, 500);
 
-      // Generate all images in parallel
-      const generationPromises = Array.from({ length: quantity }, (_, i) =>
-        generateIdPhoto(idPhotoFile, {
-          retouchLevel: idPhotoRetouchLevel,
-          idType: idPhotoType,
-          outputSpec: idPhotoOutputSpec,
-          clothingOption: idPhotoClothingOption,
-          clothingCustomText: idPhotoClothingOption === 'custom' ? idPhotoClothingCustomText.trim() || undefined : undefined,
-          clothingReferenceImage: idPhotoClothingOption === 'custom' && idPhotoClothingReferenceFile ? idPhotoClothingReferenceFile : undefined,
-          settings: { apiKey: settings.apiKey, model: settings.model },
-        })
+            // Generate all images in parallel with variations
+            const generationPromises = Array.from({ length: quantity }, (_, i) =>
+                generateIdPhoto(idPhotoFile, {
+                    retouchLevel: idPhotoRetouchLevel,
+                    idType: idPhotoType,
+                    outputSpec: idPhotoOutputSpec,
+                    clothingOption: idPhotoClothingOption,
+                    clothingCustomText: idPhotoClothingOption === 'custom' ? idPhotoClothingCustomText.trim() || undefined : undefined,
+                    clothingReferenceImage: idPhotoClothingOption === 'custom' && idPhotoClothingReferenceFile ? idPhotoClothingReferenceFile : undefined,
+                    settings: { apiKey: settings.apiKey, model: settings.model },
+                    variationIndex: i, // Use index to create different variations
+                })
           .then((url) => {
             // Add to history
             addToHistory('idphoto', url, {

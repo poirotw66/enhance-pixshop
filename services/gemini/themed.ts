@@ -13,6 +13,7 @@ import { fileToPart, getClient, getModel, handleApiResponse, type ServiceSetting
 export interface GenerateThemedPhotoOptions {
   themeType?: ThemedType;
   settings?: ServiceSettings;
+  variationIndex?: number; // For generating different variations
 }
 
 /**
@@ -31,15 +32,38 @@ export const generateThemedPhoto = async (
 
   const theme = THEMED_TYPES.find((t) => t.id === themeType) || THEMED_TYPES[0];
 
+  // Add variation for diversity when generating multiple images
+  const compositionVariations = [
+    'unique composition and framing',
+    'distinctive camera angle and perspective',
+    'varied lighting and mood',
+    'different pose arrangement',
+    'alternative visual composition',
+  ];
+  const detailVariations = [
+    'with subtle unique details',
+    'with distinct visual elements',
+    'with varied atmospheric effects',
+    'with different depth of field',
+    'with unique color grading',
+  ];
+  const variationSeed = options.variationIndex !== undefined ? options.variationIndex : Math.floor(Math.random() * 1000);
+  const compositionVar = compositionVariations[variationSeed % compositionVariations.length];
+  const detailVar = detailVariations[variationSeed % detailVariations.length];
+
   const introMultiImages = isGroup
     ? `Note: You are given ${fileCount} portrait images. Create a ${fileCount === 2 ? 'couple' : 'group'} themed photoshoot featuring all of them.\n\n`
+    : '';
+
+  const variationNote = options.variationIndex !== undefined 
+    ? `\nVariation Requirements:\n- Apply ${compositionVar}.\n- Include ${detailVar}.\n- Create a unique interpretation while maintaining the core theme.\n`
     : '';
 
   const prompt = `${introMultiImages}You are a world-class themed portrait photographer and retouching AI.
 Transform the provided image${isGroup ? 's' : ''} into a themed photoshoot style image.
 
 Style Requirements:
-${theme.promptHint}
+${theme.promptHint}${variationNote}
 
 Guidelines:
 - Maintain strict identity consistency: ${fileCount === 1 ? 'the person' : fileCount === 2 ? 'both people' : 'all people'} must look the same as in the ${isGroup ? 'source images' : 'original image'}.

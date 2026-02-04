@@ -19,6 +19,7 @@ export interface GeneratePortraitOptions {
   portraitType?: PortraitType;
   outputSpec?: OutputSpec;
   settings?: ServiceSettings;
+  variationIndex?: number; // For generating different variations
 }
 
 /**
@@ -50,6 +51,33 @@ export const generateProfessionalPortrait = async (
     peopleDescription = `the group (${fileCount} people) in the source images`;
   }
 
+  // Add variation for diversity when generating multiple images
+  const lightingVariations = [
+    'soft natural studio lighting',
+    'dramatic side lighting',
+    'even diffused lighting',
+    'warm golden hour lighting',
+    'cool professional lighting',
+  ];
+  const angleVariations = [
+    'eye level shot',
+    'slightly elevated angle',
+    'slightly lower angle',
+    'portrait angle',
+    'fashion photography angle',
+  ];
+  const expressionVariations = [
+    'natural confident expression',
+    'slight professional smile',
+    'serious professional expression',
+    'approachable expression',
+    'authoritative expression',
+  ];
+  const variationSeed = options.variationIndex !== undefined ? options.variationIndex : Math.floor(Math.random() * 1000);
+  const lightingVar = lightingVariations[variationSeed % lightingVariations.length];
+  const angleVar = angleVariations[variationSeed % angleVariations.length];
+  const expressionVar = expressionVariations[variationSeed % expressionVariations.length];
+
   const positive = [
     fileCount === 1
       ? 'Professional photography portrait'
@@ -61,7 +89,7 @@ export const generateProfessionalPortrait = async (
     style.promptHint,
     spec.cropHint,
     'Clean professional background suitable for the style',
-    'Perfect studio lighting',
+    options.variationIndex !== undefined ? `${lightingVar}, ${angleVar}, ${expressionVar}` : 'Perfect studio lighting',
     'Realistic, photorealistic, premium quality',
   ]
     .filter(Boolean)

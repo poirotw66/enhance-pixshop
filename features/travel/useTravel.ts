@@ -269,10 +269,28 @@ export function useTravel() {
         isGroup: isGroupMode || files.length > 1
       });
 
-      // Generate all images in parallel
-      const generationPromises = Array.from({ length: quantity }, (_, i) =>
-        generateTravelPhoto(isGroupMode ? files : files[0], {
-          scenePrompt: finalPrompt,
+      // Generate all images in parallel with variations
+      const generationPromises = Array.from({ length: quantity }, (_, i) => {
+        // Generate a unique prompt variation for each image
+        const variedPrompt = generateDynamicTravelPrompt(scenePrompt, {
+          style: stylePrompt,
+          weather: weatherPrompt,
+          time: timePrompt,
+          vibe: vibePrompt,
+          outfit: outfitPrompt,
+          customOutfitText: outfit === 'custom' ? customOutfitText : undefined,
+          outfitColor: outfitColor,
+          pose: posePrompt,
+          customPoseText: pose === 'custom' ? customPoseText : undefined,
+          relationship: TRAVEL_RELATIONSHIP_OPTIONS.find(r => r.id === relationship)?.prompt || '',
+          framing: TRAVEL_FRAMING_OPTIONS.find(f => f.id === framing)?.prompt || '',
+          clearBackground: clearBackground,
+          isGroup: isGroupMode || files.length > 1,
+          variationIndex: i, // Use index to create different variations
+        });
+
+        return generateTravelPhoto(isGroupMode ? files : files[0], {
+          scenePrompt: variedPrompt,
           aspectRatio,
           imageSize,
           sceneReferenceImage,
@@ -280,8 +298,8 @@ export function useTravel() {
         }).catch((err) => {
           console.error(`Travel generation error for item ${i + 1}:`, err);
           throw err;
-        })
-      );
+        });
+      });
 
       const settledResults = await Promise.allSettled(generationPromises);
       const generatedResults = settledResults

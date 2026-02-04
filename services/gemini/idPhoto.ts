@@ -38,6 +38,7 @@ export interface GenerateIdPhotoOptions {
   clothingCustomText?: string;
   clothingReferenceImage?: File;
   settings?: ServiceSettings;
+  variationIndex?: number; // For generating different variations
 }
 
 /**
@@ -84,12 +85,24 @@ export const generateIdPhoto = async (
     clothingHint = 'Use appropriate professional attire suitable for an ID photo.';
   }
 
+  // Add variation for diversity when generating multiple images
+  const variationModifiers = [
+    'slight variation in lighting angle',
+    'subtle difference in facial expression',
+    'minor variation in head position',
+    'slight difference in camera distance',
+    'subtle variation in background lighting',
+  ];
+  const variationSeed = opts.variationIndex !== undefined ? opts.variationIndex : Math.floor(Math.random() * 1000);
+  const variationModifier = variationModifiers[variationSeed % variationModifiers.length];
+
   const positive = [
     ID_PHOTO_BASE_POSITIVE,
     spec.cropHint,
     level.positiveModifier,
     type.promptHint,
     clothingHint,
+    opts.variationIndex !== undefined ? `Apply ${variationModifier} to create a unique variation while maintaining all requirements.` : '',
   ]
     .filter(Boolean)
     .join(' ');

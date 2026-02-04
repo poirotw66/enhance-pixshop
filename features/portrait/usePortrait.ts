@@ -86,12 +86,13 @@ export function usePortrait() {
                 });
             }, 500);
 
-            // Generate all images in parallel
+            // Generate all images in parallel with variations
             const generationPromises = Array.from({ length: quantity }, (_, i) =>
                 generateProfessionalPortrait(portraitFile, {
                     portraitType,
                     outputSpec: portraitOutputSpec,
                     settings: { apiKey: settings.apiKey, model: settings.model },
+                    variationIndex: i, // Use index to create different variations
                 })
                     .then((url) => {
                         // Add to history

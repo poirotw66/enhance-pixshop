@@ -194,11 +194,43 @@ export function useCoupleGroup() {
       const fileCount = files.length;
       const isGroup = fileCount > 1;
 
-      const prompt = `You are a world-class ${mode === 'couple' ? 'couple' : 'group'} portrait photographer and retouching AI.
+      // Create base prompt with variation support
+      const createPrompt = (variationIndex: number) => {
+        const lightingVariations = [
+          'soft natural lighting',
+          'dramatic side lighting',
+          'warm golden hour lighting',
+          'even studio lighting',
+          'cinematic lighting',
+        ];
+        const compositionVariations = [
+          'unique composition and arrangement',
+          'distinctive framing and positioning',
+          'varied spatial arrangement',
+          'different pose configuration',
+          'alternative layout',
+        ];
+        const expressionVariations = [
+          'natural expressions',
+          'genuine interactions',
+          'authentic moments',
+          'spontaneous poses',
+          'candid expressions',
+        ];
+        const seed = variationIndex;
+        const lightingVar = lightingVariations[seed % lightingVariations.length];
+        const compositionVar = compositionVariations[seed % compositionVariations.length];
+        const expressionVar = expressionVariations[seed % expressionVariations.length];
+
+        const variationNote = quantity > 1 
+          ? `\nVariation Requirements:\n- Apply ${lightingVar}.\n- Use ${compositionVar}.\n- Capture ${expressionVar}.\n- Create a unique interpretation while maintaining the core style.\n`
+          : '';
+
+        return `You are a world-class ${mode === 'couple' ? 'couple' : 'group'} portrait photographer and retouching AI.
 Transform the provided ${fileCount === 2 ? 'couple' : `group of ${fileCount} people`} portrait${isGroup ? 's' : ''} into a high-end, professional style image.
 
 Style Requirements:
-${styleConfig.promptHint}
+${styleConfig.promptHint}${variationNote}
 
 Guidelines:
 - Maintain strict identity consistency: ${fileCount === 2 ? 'both people' : `all ${fileCount} people`} must look the same as in the ${isGroup ? 'source images' : 'original image'}.
@@ -208,38 +240,40 @@ Guidelines:
 - Output should be photorealistic and high quality.
 
 Output: Return ONLY the final ${mode === 'couple' ? 'couple' : 'group'} portrait image. Do not return any text.`;
+      };
 
-      const textPart = { text: prompt };
-      const parts: Array<
-        { inlineData?: { mimeType: string; data: string } } | { text: string }
-      > = [];
-
+      // Prepare file parts (same for all variations)
+      const fileParts: Array<{ inlineData?: { mimeType: string; data: string } }> = [];
       for (const file of files) {
-        parts.push(await fileToPart(file));
+        fileParts.push(await fileToPart(file));
       }
-      parts.push(textPart);
 
       console.log('Starting couple/group photo generation', { mode, style, fileCount });
       const ai = getClient(settings);
       const model = getModel(settings);
 
-      // Generate all images in parallel
-      const generationPromises = Array.from({ length: quantity }, (_, i) =>
-        ai.models.generateContent({
-          model,
-          contents: { parts },
-          config: {
-            responseModalities: ['TEXT', 'IMAGE'],
-          },
-        })
-          .then((response) => {
-            return handleApiResponse(response, mode === 'couple' ? 'couple' : 'group');
-          })
-          .catch((err) => {
-            console.error(`Couple/group generation error for item ${i + 1}:`, err);
-            throw err;
-          })
-      );
+      // Generate all images in parallel with variations
+      const generationPromises = Array.from({ length: quantity }, async (_, i) => {
+        // Create unique prompt for each variation
+        const variedPrompt = createPrompt(i);
+        const parts: Array<
+          { inlineData?: { mimeType: string; data: string } } | { text: string }
+        > = [...fileParts, { text: variedPrompt }];
+
+        try {
+          const response = await ai.models.generateContent({
+            model,
+            contents: { parts },
+            config: {
+              responseModalities: ['TEXT', 'IMAGE'],
+            },
+          });
+          return handleApiResponse(response, mode === 'couple' ? 'couple' : 'group');
+        } catch (err) {
+          console.error(`Couple/group generation error for item ${i + 1}:`, err);
+          throw err;
+        }
+      });
 
       const settledResults = await Promise.allSettled(generationPromises);
       const generatedResults = settledResults
