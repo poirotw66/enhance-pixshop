@@ -23,12 +23,7 @@ import {
   DEFAULT_CLOTHING_OPTION,
 } from '../../constants/idPhoto';
 import { fileToPartAuto, getClient, getModel, handleApiResponse, type ServiceSettings } from './shared';
-
-/** Base positive: identity, expression, background, lighting (no retouch, no framing) */
-const ID_PHOTO_BASE_POSITIVE = `Korean ID photo, passport-style photo, professional studio photo retouch, use the same person, preserve identity, same face, same facial structure, no face change, no age change, no gender change, neutral expression, mouth closed, eyes open, looking straight at camera, clean pure white background, simple and clean background, even and soft studio lighting, no shadow on face, no shadow on background, realistic, photorealistic, looks like a real photo, not stylized, not artistic, not a painting, not an illustration`;
-
-/** Base negative (must avoid) */
-const ID_PHOTO_BASE_NEGATIVE = `different person, change face, change identity, face swap, wrong person, beautify, over-beautify, beauty filter, meitu, snow app, filter, plastic skin, doll face, over-smooth, airbrushed, fake skin, CGI, AI face, AI generated look, anime, cartoon, illustration, painting, 3d render, smile, laughing, open mouth, teeth, exaggerated expression, tilted head, angle view, side view, looking away, dramatic lighting, rim light, hard light, strong shadow, shadow on face, shadow on background, low quality, blurry, noise, jpeg artifacts, oversharpen, deformed, distorted, asymmetrical face, extra face, extra features, bad anatomy, big eyes, small face, unrealistic face, beauty face, idol face`;
+import { generateIdPhotoPrompt } from './prompts';
 
 export interface GenerateIdPhotoOptions {
   retouchLevel?: RetouchLevel;
@@ -85,42 +80,15 @@ export const generateIdPhoto = async (
     clothingHint = 'Use appropriate professional attire suitable for an ID photo.';
   }
 
-  // Add variation for diversity when generating multiple images
-  const variationModifiers = [
-    'slight variation in lighting angle',
-    'subtle difference in facial expression',
-    'minor variation in head position',
-    'slight difference in camera distance',
-    'subtle variation in background lighting',
-  ];
-  const variationSeed = opts.variationIndex !== undefined ? opts.variationIndex : Math.floor(Math.random() * 1000);
-  const variationModifier = variationModifiers[variationSeed % variationModifiers.length];
-
-  const positive = [
-    ID_PHOTO_BASE_POSITIVE,
-    spec.cropHint,
-    level.positiveModifier,
-    type.promptHint,
+  // Generate prompt using unified prompt system
+  const prompt = generateIdPhotoPrompt({
+    retouchLevel: level,
+    idType: type,
+    outputSpec: spec,
     clothingHint,
-    opts.variationIndex !== undefined ? `Apply ${variationModifier} to create a unique variation while maintaining all requirements.` : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
-  const negative = [ID_PHOTO_BASE_NEGATIVE, level.negativeExtra].filter(Boolean).join(' ');
-
-  const introTwoImages = clothingReferenceImage
-    ? 'Note: You are given TWO images. The first image is the portrait to transform. The second image is a reference for the desired clothing/outfit.\n\n'
-    : '';
-
-  const prompt = `${introTwoImages}You are an expert ID and passport photo retouching AI. Transform the provided portrait into a professional, compliant ID/passport-style photo.
-
-Requirements (MUST follow):
-${positive}
-
-Never do (MUST avoid):
-${negative}
-
-Output: Return ONLY the final ID/passport-style image. Do not return any text.`;
+    clothingReferenceImage,
+    variationIndex: opts.variationIndex,
+  });
   const textPart = { text: prompt };
 
   console.log('Starting ID photo generation', {

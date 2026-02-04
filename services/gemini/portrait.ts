@@ -14,6 +14,7 @@ import {
   DEFAULT_PORTRAIT_SPEC,
 } from '../../constants/portrait';
 import { fileToPartAuto, getClient, getModel, handleApiResponse, type ServiceSettings } from './shared';
+import { generatePortraitPrompt } from './prompts';
 
 export interface GeneratePortraitOptions {
   portraitType?: PortraitType;
@@ -41,77 +42,13 @@ export const generateProfessionalPortrait = async (
   const spec =
     PORTRAIT_OUTPUT_SPECS.find((s) => s.id === outputSpec) || PORTRAIT_OUTPUT_SPECS[0];
 
-  // Adjust prompt based on number of people
-  let peopleDescription: string;
-  if (fileCount === 1) {
-    peopleDescription = 'the person in the source image';
-  } else if (fileCount === 2) {
-    peopleDescription = 'the couple (two people) in the source images';
-  } else {
-    peopleDescription = `the group (${fileCount} people) in the source images`;
-  }
-
-  // Add variation for diversity when generating multiple images
-  const lightingVariations = [
-    'soft natural studio lighting',
-    'dramatic side lighting',
-    'even diffused lighting',
-    'warm golden hour lighting',
-    'cool professional lighting',
-  ];
-  const angleVariations = [
-    'eye level shot',
-    'slightly elevated angle',
-    'slightly lower angle',
-    'portrait angle',
-    'fashion photography angle',
-  ];
-  const expressionVariations = [
-    'natural confident expression',
-    'slight professional smile',
-    'serious professional expression',
-    'approachable expression',
-    'authoritative expression',
-  ];
-  const variationSeed = options.variationIndex !== undefined ? options.variationIndex : Math.floor(Math.random() * 1000);
-  const lightingVar = lightingVariations[variationSeed % lightingVariations.length];
-  const angleVar = angleVariations[variationSeed % angleVariations.length];
-  const expressionVar = expressionVariations[variationSeed % expressionVariations.length];
-
-  const positive = [
-    fileCount === 1
-      ? 'Professional photography portrait'
-      : fileCount === 2
-        ? 'Professional couple photography portrait'
-        : `Professional group photography portrait with ${fileCount} people`,
-    'High-end studio retouching',
-    `Preserve identity and facial features of ${peopleDescription}`,
-    style.promptHint,
-    spec.cropHint,
-    'Clean professional background suitable for the style',
-    options.variationIndex !== undefined ? `${lightingVar}, ${angleVar}, ${expressionVar}` : 'Perfect studio lighting',
-    'Realistic, photorealistic, premium quality',
-  ]
-    .filter(Boolean)
-    .join('. ');
-
-  const introMultiImages = isGroup
-    ? `Note: You are given ${fileCount} portrait images. Create a ${fileCount === 2 ? 'couple' : 'group'} portrait featuring all of them.\n\n`
-    : '';
-
-  const prompt = `${introMultiImages}You are a world-class professional portrait photographer and retouching AI. 
-Transform the provided portrait${isGroup ? 's' : ''} into a high-end, professional style image.
-
-Style Requirements:
-${positive}
-
-Guidelines:
-- Maintain strict identity consistency: ${fileCount === 1 ? 'the person' : fileCount === 2 ? 'both people' : 'all people'} must be the same as in the ${isGroup ? 'source images' : 'original image'}.
-- Do NOT change facial structure or age.
-- Only enhance lighting, skin texture, and apply the requested professional photography style.
-${fileCount > 1 ? `- Arrange ${fileCount === 2 ? 'the couple' : 'the group'} naturally and harmoniously in the composition.` : ''}
-
-Output: Return ONLY the final professional portrait image. Do not return any text.`;
+  // Generate prompt using unified prompt system
+  const prompt = generatePortraitPrompt({
+    portraitType: style,
+    outputSpec: spec,
+    fileCount,
+    variationIndex: options.variationIndex,
+  });
 
   const textPart = { text: prompt };
   const parts: Array<{ inlineData?: { mimeType: string; data: string } } | { text: string }> = [];

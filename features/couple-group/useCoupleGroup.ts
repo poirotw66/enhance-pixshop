@@ -10,6 +10,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { fileToPartAuto, getClient, getModel, handleApiResponse } from '../../services/gemini/shared';
+import { generateCoupleGroupPrompt } from '../../services/gemini/prompts';
 import type { CoupleGroupMode, CoupleGroupStyle } from './types';
 import type { CoupleStyle, GroupStyle } from '../../types';
 import {
@@ -203,52 +204,14 @@ export function useCoupleGroup() {
       const fileCount = files.length;
       const isGroup = fileCount > 1;
 
-      // Create base prompt with variation support
+      // Create base prompt with variation support using unified prompt system
       const createPrompt = (variationIndex: number) => {
-        const lightingVariations = [
-          'soft natural lighting',
-          'dramatic side lighting',
-          'warm golden hour lighting',
-          'even studio lighting',
-          'cinematic lighting',
-        ];
-        const compositionVariations = [
-          'unique composition and arrangement',
-          'distinctive framing and positioning',
-          'varied spatial arrangement',
-          'different pose configuration',
-          'alternative layout',
-        ];
-        const expressionVariations = [
-          'natural expressions',
-          'genuine interactions',
-          'authentic moments',
-          'spontaneous poses',
-          'candid expressions',
-        ];
-        const seed = variationIndex;
-        const lightingVar = lightingVariations[seed % lightingVariations.length];
-        const compositionVar = compositionVariations[seed % compositionVariations.length];
-        const expressionVar = expressionVariations[seed % expressionVariations.length];
-
-        const variationNote = quantity > 1 
-          ? `\nVariation Requirements:\n- Apply ${lightingVar}.\n- Use ${compositionVar}.\n- Capture ${expressionVar}.\n- Create a unique interpretation while maintaining the core style.\n`
-          : '';
-
-        return `You are a world-class ${mode === 'couple' ? 'couple' : 'group'} portrait photographer and retouching AI.
-Transform the provided ${fileCount === 2 ? 'couple' : `group of ${fileCount} people`} portrait${isGroup ? 's' : ''} into a high-end, professional style image.
-
-Style Requirements:
-${styleConfig.promptHint}${variationNote}
-
-Guidelines:
-- Maintain strict identity consistency: ${fileCount === 2 ? 'both people' : `all ${fileCount} people`} must look the same as in the ${isGroup ? 'source images' : 'original image'}.
-- Do NOT change facial structure or age.
-- Arrange ${fileCount === 2 ? 'the couple' : `the group`} naturally and harmoniously in the composition.
-- Only enhance lighting, skin texture, and apply the requested photography style.
-- Output should be photorealistic and high quality.
-
-Output: Return ONLY the final ${mode === 'couple' ? 'couple' : 'group'} portrait image. Do not return any text.`;
+        return generateCoupleGroupPrompt({
+          styleHint: styleConfig.promptHint,
+          fileCount,
+          mode,
+          variationIndex: quantity > 1 ? variationIndex : undefined,
+        });
       };
 
       // Prepare file parts (same for all variations)
