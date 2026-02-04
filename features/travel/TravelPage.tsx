@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
 import StartTabNav from '../../components/StartTabNav';
-import Spinner from '../../components/Spinner';
+import ProgressIndicator from '../../components/ProgressIndicator';
 import { useTravel } from './useTravel';
 import TravelForm from './TravelForm';
 import TravelUploadSection from './TravelUploadSection';
@@ -20,31 +20,11 @@ interface TravelPageProps {
   onImageSelected: (file: File) => void;
 }
 
-const LOADING_STATUSES = [
-  'travel.status.analyzing',
-  'travel.status.blending',
-  'travel.status.lighting',
-  'travel.status.refining'
-];
-
 const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const tr = useTravel();
   const [viewMode, setViewMode] = React.useState<'list' | 'map'>('map');
-  const [statusIndex, setStatusIndex] = React.useState(0);
-
-  React.useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (tr.loading) {
-      interval = setInterval(() => {
-        setStatusIndex((prev) => (prev + 1) % LOADING_STATUSES.length);
-      }, 3000);
-    } else {
-      setStatusIndex(0);
-    }
-    return () => clearInterval(interval);
-  }, [tr.loading]);
 
   const handleEditInEditor = (result: string, index?: number) => {
     if (!result) return;
@@ -112,16 +92,10 @@ const TravelPage: React.FC<TravelPageProps> = ({ onImageSelected }) => {
             onEditInEditor={handleEditInEditor}
           />
         ) : tr.loading ? (
-          <div className="flex flex-col items-center gap-4 w-full max-w-md animate-fade-in bg-gray-800/40 p-12 rounded-2xl border border-gray-700/50 backdrop-blur-md mx-auto shadow-2xl">
-            <div className="relative">
-              <Spinner />
-              <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full -z-10 animate-pulse" />
-            </div>
-            <div className="space-y-2 text-center">
-              <p className="text-xl font-bold text-gray-100">{t('travel.generating')}</p>
-              <p className="text-blue-400 font-medium animate-pulse">{t(LOADING_STATUSES[statusIndex])}</p>
-            </div>
-          </div>
+          <ProgressIndicator
+            progress={tr.progress}
+            statusMessages={['travel.generating']}
+          />
         ) : (
           <div className={`w-full ${viewMode === 'map' ? 'flex flex-col gap-6' : 'grid grid-cols-1 lg:grid-cols-2 gap-6 items-start'}`}>
             <div className={viewMode === 'map' ? 'w-full' : 'space-y-4'}>

@@ -41,6 +41,7 @@ export function useCoupleGroup() {
   const [error, setError] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
+  const [progress, setProgress] = useState<number>(0);
 
   // Read URL parameters on mount
   useEffect(() => {
@@ -175,10 +176,18 @@ export function useCoupleGroup() {
 
     setLoading(true);
     setError(null);
+    setProgress(0);
     setResult(null);
     setResults([]);
 
     try {
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 10;
+        });
+      }, 500);
       // Find the style configuration
       const styleConfig =
         mode === 'couple'
@@ -280,6 +289,9 @@ Output: Return ONLY the final ${mode === 'couple' ? 'couple' : 'group'} portrait
         .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')
         .map((result) => result.value);
 
+      clearInterval(progressInterval);
+      setProgress(100);
+
       if (generatedResults.length === 0) {
         throw new Error('All generations failed');
       }
@@ -294,6 +306,7 @@ Output: Return ONLY the final ${mode === 'couple' ? 'couple' : 'group'} portrait
       setError(err instanceof Error ? err.message : t('couple_group.error_generation_failed'));
     } finally {
       setLoading(false);
+      setProgress(0);
     }
   }, [mode, files, style, settings, t, quantity]);
 
@@ -345,6 +358,7 @@ Output: Return ONLY the final ${mode === 'couple' ? 'couple' : 'group'} portrait
     results,
     loading,
     error,
+    progress,
     isDraggingOver,
     quantity,
     setQuantity,

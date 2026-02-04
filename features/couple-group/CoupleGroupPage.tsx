@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
 import StartTabNav from '../../components/StartTabNav';
-import Spinner from '../../components/Spinner';
+import ProgressIndicator from '../../components/ProgressIndicator';
 import CoupleGroupModeTabs from './CoupleGroupModeTabs';
 import CoupleGroupStyleSelector from './CoupleGroupStyleSelector';
 import CoupleGroupUploadSection from './CoupleGroupUploadSection';
@@ -101,10 +101,10 @@ const CoupleGroupPage: React.FC<CoupleGroupPageProps> = ({ onImageSelected }) =>
             }}
           />
         ) : coupleGroup.loading ? (
-          <div className="w-full max-w-2xl mx-auto p-8 bg-gray-800/40 rounded-xl border border-gray-700/50 backdrop-blur-sm">
-            <Spinner />
-            <p className="text-gray-300 mt-4">{t('couple_group.generating')}</p>
-          </div>
+          <ProgressIndicator
+            progress={coupleGroup.progress}
+            statusMessages={['couple_group.generating']}
+          />
         ) : (
           <>
             <CoupleGroupStyleSelector

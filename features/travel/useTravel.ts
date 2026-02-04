@@ -44,6 +44,7 @@ export function useTravel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
+  const [progress, setProgress] = useState<number>(0);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [selectedSceneId, setSelectedSceneId] = useState<TravelSceneIdOrCustom>(TRAVEL_SCENES[0]?.id ?? 'shibuya');
   const [customSceneText, setCustomSceneText] = useState('');
@@ -226,10 +227,18 @@ export function useTravel() {
     }
     setError(null);
     setLoading(true);
+    setProgress(0);
     setResult(null);
     setResults([]);
 
     try {
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 10;
+        });
+      }, 500);
       // Enhance the prompt with dynamic variations and selected style/weather/time/vibe
       const stylePrompt = TRAVEL_STYLES.find(s => s.id === style)?.prompt || '';
 
@@ -306,6 +315,9 @@ export function useTravel() {
         .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')
         .map((result) => result.value);
 
+      clearInterval(progressInterval);
+      setProgress(100);
+
       console.log(`Travel generation completed: requested ${quantity}, succeeded ${generatedResults.length}, failed ${settledResults.length - generatedResults.length}`);
 
       if (generatedResults.length === 0) {
@@ -341,6 +353,7 @@ export function useTravel() {
       setError(`${t('travel.error_failed')} ${msg}`);
     } finally {
       setLoading(false);
+      setProgress(0);
     }
   }, [files, isGroupMode, selectedSceneId, customSceneText, customSceneReferenceFile, resolveScenePrompt, aspectRatio, imageSize, style, weather, timeOfDay, vibe, outfit, outfitColor, pose, relationship, framing, clearBackground, settings.apiKey, settings.model, t, useReferenceImage, quantity]);
 
@@ -460,6 +473,7 @@ export function useTravel() {
     resultMetadata,
     loading,
     error,
+    progress,
     previewUrls,
     quantity,
     setQuantity,
