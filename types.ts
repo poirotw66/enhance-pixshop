@@ -35,8 +35,29 @@ export type ClothingOption =
 /** Portrait / Corporate photo style type */
 export type PortraitType =
   | 'premium_leader'
+  | 'premium_erya'
   | 'corporate_mag'
   | 'graduation'
   | 'business'
   | 'cabin_crew'
-  | 'model_card';
+  | 'model_card'
+  | 'portrait_resume_grad'
+  | 'portrait_resume';
+
+/** Themed photoshoot style (matches photography service themed item ids) */
+export type ThemedType =
+  | 'themed-birthday'
+  | 'themed-magazine'
+  | 'themed-grad-polaroid'
+  | 'themed-polaroid'
+  | 'themed-polaroid-set'
+  | 'themed-sport'
+  | 'themed-maternity'
+  | 'themed-kendall'
+  | 'themed-us-college'
+  | 'themed-us-sport'
+  | 'themed-retro-high'
+  | 'themed-music'
+  | 'themed-kids'
+  | 'themed-pet-owner'
+  | 'themed-pet';

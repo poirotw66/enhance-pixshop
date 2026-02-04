@@ -6,7 +6,7 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
-export type StartTab = 'upload' | 'generate' | 'idphoto' | 'portrait' | 'travel' | 'photography-service';
+export type StartTab = 'upload' | 'generate' | 'idphoto' | 'portrait' | 'travel' | 'themed' | 'photography-service';
 
 interface StartTabNavProps {
   currentTab: StartTab;
@@ -71,6 +71,15 @@ const StartTabNav: React.FC<StartTabNavProps> = ({ currentTab, navigate }) => {
           }`}
       >
         {t('start.tab_travel')}
+      </button>
+      <button
+        onClick={() => navigate('/themed')}
+        className={`px-5 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${currentTab === 'themed'
+          ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
+          : 'text-gray-400 hover:text-white hover:bg-white/10'
+          }`}
+      >
+        {t('start.tab_themed')}
       </button>
     </div>
   );

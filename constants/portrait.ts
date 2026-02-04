@@ -16,6 +16,11 @@ export const PORTRAIT_TYPES: {
             promptHint: 'Leader\'s vision style. Distinguished, authoritative, high-end executive look with premium studio lighting.'
         },
         {
+            id: 'premium_erya',
+            nameKey: 'portrait.type.premium_erya',
+            promptHint: 'Erya Atelier museum-grade portrait. Ultimate refined aesthetic, gallery-quality lighting and composition, timeless artistic presence.'
+        },
+        {
             id: 'corporate_mag',
             nameKey: 'portrait.type.corporate_mag',
             promptHint: 'Magazine style corporate portrait. High-fashion, editorial look, sharp and sophisticated.'
@@ -39,6 +44,16 @@ export const PORTRAIT_TYPES: {
             id: 'model_card',
             nameKey: 'portrait.type.model_card',
             promptHint: 'Model card style. Highlights physical features, distinctive style, suitable for model portfolios.'
+        },
+        {
+            id: 'portrait_resume_grad',
+            nameKey: 'portrait.type.portrait_resume_grad',
+            promptHint: 'Graduate resume portrait. Suitable for thesis and major job platforms. Academic, professional, approachable.'
+        },
+        {
+            id: 'portrait_resume',
+            nameKey: 'portrait.type.portrait_resume',
+            promptHint: 'Resume portrait for job applications and social profiles. Professional, approachable, suitable for LinkedIn and resumes.'
         },
     ];
 

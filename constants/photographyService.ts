@@ -10,10 +10,8 @@ export const PHOTOGRAPHY_SERVICE_CATEGORIES: PhotographyServiceCategory[] = [
     { id: 'corporate', labelKey: 'service.category.corporate', order: 2 },
     { id: 'portrait', labelKey: 'service.category.portrait', order: 3 },
     { id: 'themed', labelKey: 'service.category.themed', order: 4 },
-    { id: 'premium', labelKey: 'service.category.premium', order: 5 },
-    { id: 'couple', labelKey: 'service.category.couple', order: 6 },
-    { id: 'group', labelKey: 'service.category.group', order: 7 },
-    { id: 'voucher', labelKey: 'service.category.voucher', order: 8 },
+    { id: 'couple', labelKey: 'service.category.couple', order: 5 },
+    { id: 'group', labelKey: 'service.category.group', order: 6 },
 ];
 
 export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
@@ -49,7 +47,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         targetRoute: '/idphoto?level=premium',
     },
 
-    // --- Corporate ---
+    // --- Corporate (Professional Portrait) ---
     {
         id: 'premium-leader-corp',
         categoryId: 'corporate',
@@ -58,8 +56,19 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 8,000',
         priceRange: 'NT$ 6,000',
         badgeKey: 'service.badge.limited',
-        actionLabelKey: 'service.action.view',
-        targetRoute: '/idphoto',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/portrait?type=premium_leader',
+    },
+    {
+        id: 'premium-erya',
+        categoryId: 'corporate',
+        nameKey: 'service.item.premium_erya.name',
+        descriptionKey: 'service.item.premium_erya.desc',
+        originalPrice: 'NT$ 8,800',
+        priceRange: 'NT$ 6,600',
+        badgeKey: 'service.badge.limited',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/portrait?type=premium_erya',
     },
     {
         id: 'corporate-mag',
@@ -68,8 +77,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.corporate_mag.desc',
         originalPrice: 'NT$ 7,300',
         priceRange: 'NT$ 3,800 ~ 6,300',
-        actionLabelKey: 'service.action.view',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/portrait?type=corporate_mag',
     },
     {
         id: 'corp-grad-half',
@@ -79,7 +88,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 3,200',
         priceRange: 'NT$ 2,600',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=graduation&spec=half_body',
     },
     {
         id: 'corp-half-1',
@@ -89,7 +98,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 3,200',
         priceRange: 'NT$ 2,600',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=business&spec=half_body',
     },
     {
         id: 'corp-half-5',
@@ -99,7 +108,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 6,400',
         priceRange: 'NT$ 5,200',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=business&spec=half_body',
     },
     {
         id: 'corp-grad-full',
@@ -109,7 +118,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 4,000',
         priceRange: 'NT$ 3,000',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=graduation&spec=full_body',
     },
     {
         id: 'corp-full-1',
@@ -119,7 +128,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 4,000',
         priceRange: 'NT$ 3,000',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=business&spec=full_body',
     },
     {
         id: 'corp-full-5',
@@ -129,7 +138,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 7,200',
         priceRange: 'NT$ 6,000',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=business&spec=full_body',
     },
     {
         id: 'cabin-half',
@@ -139,7 +148,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 4,000',
         priceRange: 'NT$ 3,200',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=cabin_crew&spec=half_body',
     },
     {
         id: 'cabin-full',
@@ -149,7 +158,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 4,400',
         priceRange: 'NT$ 3,600',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=cabin_crew&spec=full_body',
     },
     {
         id: 'model-card',
@@ -159,8 +168,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 4,600',
         priceRange: 'NT$ 3,200',
         badgeKey: 'service.badge.limited',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/portrait?type=model_card',
     },
 
     // --- Portrait ---
@@ -172,7 +181,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 2,400',
         priceRange: 'NT$ 2,200',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=portrait_resume_grad',
     },
     {
         id: 'portrait-resume',
@@ -182,7 +191,7 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 2,400',
         priceRange: 'NT$ 2,200',
         actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
+        targetRoute: '/portrait?type=portrait_resume',
     },
 
     // --- Themed ---
@@ -193,8 +202,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_birthday.desc',
         originalPrice: 'NT$ 4,800',
         priceRange: 'NT$ 3,800 ~ 7,900',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-birthday',
     },
     {
         id: 'themed-magazine',
@@ -204,8 +213,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 4,800',
         priceRange: 'NT$ 3,800 ~ 7,900',
         badgeKey: 'service.badge.new',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-magazine',
     },
     {
         id: 'themed-grad-polaroid',
@@ -214,8 +223,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_grad_polaroid.desc',
         originalPrice: 'NT$ 2,499',
         priceRange: 'NT$ 990',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-grad-polaroid',
     },
     {
         id: 'themed-polaroid',
@@ -224,8 +233,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_polaroid.desc',
         originalPrice: 'NT$ 2,499',
         priceRange: 'NT$ 1,800',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-polaroid',
     },
     {
         id: 'themed-polaroid-set',
@@ -234,8 +243,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_polaroid_set.desc',
         originalPrice: 'NT$ 4,200',
         priceRange: 'NT$ 3,800',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-polaroid-set',
     },
     {
         id: 'themed-sport',
@@ -244,8 +253,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_sport.desc',
         originalPrice: 'NT$ 3,200',
         priceRange: 'NT$ 2,600',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-sport',
     },
     {
         id: 'themed-maternity',
@@ -254,8 +263,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_maternity.desc',
         originalPrice: 'NT$ 3,200',
         priceRange: 'NT$ 2,600',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-maternity',
     },
     {
         id: 'themed-kendall',
@@ -264,8 +273,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_kendall.desc',
         originalPrice: 'NT$ 4,200',
         priceRange: 'NT$ 3,200',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-kendall',
     },
     {
         id: 'themed-us-college',
@@ -274,8 +283,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_us_college.desc',
         originalPrice: 'NT$ 3,200',
         priceRange: 'NT$ 2,600',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-us-college',
     },
     {
         id: 'themed-us-sport',
@@ -285,8 +294,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 5,200',
         priceRange: 'NT$ 3,600',
         badgeKey: 'service.badge.limited',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-us-sport',
     },
     {
         id: 'themed-retro-high',
@@ -295,8 +304,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_retro_high.desc',
         originalPrice: 'NT$ 5,200',
         priceRange: 'NT$ 3,600',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-retro-high',
     },
     {
         id: 'themed-music',
@@ -305,8 +314,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_music.desc',
         originalPrice: 'NT$ 3,200',
         priceRange: 'NT$ 2,600',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-music',
     },
     {
         id: 'themed-kids',
@@ -315,8 +324,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_kids.desc',
         originalPrice: 'NT$ 3,200',
         priceRange: 'NT$ 2,600',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-kids',
     },
     {
         id: 'themed-pet-owner',
@@ -325,8 +334,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_pet_owner.desc',
         originalPrice: 'NT$ 5,800',
         priceRange: 'NT$ 4,200',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-pet-owner',
     },
     {
         id: 'themed-pet',
@@ -335,32 +344,8 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         descriptionKey: 'service.item.themed_pet.desc',
         originalPrice: 'NT$ 3,000',
         priceRange: 'NT$ 2,200',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
-    },
-
-    // --- Premium ---
-    {
-        id: 'premium-erya',
-        categoryId: 'premium',
-        nameKey: 'service.item.premium_erya.name',
-        descriptionKey: 'service.item.premium_erya.desc',
-        originalPrice: 'NT$ 8,800',
-        priceRange: 'NT$ 6,600',
-        badgeKey: 'service.badge.limited',
-        actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
-    },
-    {
-        id: 'premium-leader-prem',
-        categoryId: 'premium',
-        nameKey: 'service.item.premium_leader.name',
-        descriptionKey: 'service.item.premium_leader.desc',
-        originalPrice: 'NT$ 8,000',
-        priceRange: 'NT$ 6,000',
-        badgeKey: 'service.badge.limited',
-        actionLabelKey: 'service.action.view',
-        targetRoute: '/idphoto',
+        actionLabelKey: 'service.action.generate',
+        targetRoute: '/themed?type=themed-pet',
     },
 
     // --- Couple ---
@@ -547,59 +532,6 @@ export const PHOTOGRAPHY_SERVICE_ITEMS: PhotographyServiceItem[] = [
         originalPrice: 'NT$ 11,000',
         priceRange: 'NT$ 9,000',
         actionLabelKey: 'service.action.travel',
-        targetRoute: '/travel',
-    },
-
-    // --- Voucher ---
-    {
-        id: 'voucher-leader',
-        categoryId: 'voucher',
-        nameKey: 'service.item.voucher_leader.name',
-        descriptionKey: 'service.item.voucher_leader.desc',
-        originalPrice: 'NT$ 8,000',
-        priceRange: 'NT$ 6,000',
-        badgeKey: 'service.badge.limited',
-        actionLabelKey: 'service.action.view',
-        targetRoute: '/edit',
-    },
-    {
-        id: 'voucher-half',
-        categoryId: 'voucher',
-        nameKey: 'service.item.voucher_half.name',
-        descriptionKey: 'service.item.voucher_half.desc',
-        originalPrice: 'NT$ 3,200',
-        priceRange: 'NT$ 2,600',
-        actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
-    },
-    {
-        id: 'voucher-id',
-        categoryId: 'voucher',
-        nameKey: 'service.item.voucher_id.name',
-        descriptionKey: 'service.item.voucher_id.desc',
-        originalPrice: 'NT$ 1,500',
-        priceRange: 'NT$ 1,200',
-        actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
-    },
-    {
-        id: 'voucher-self',
-        categoryId: 'voucher',
-        nameKey: 'service.item.voucher_self.name',
-        descriptionKey: 'service.item.voucher_self.desc',
-        originalPrice: 'NT$ 890',
-        priceRange: 'NT$ 590',
-        actionLabelKey: 'service.action.generate',
-        targetRoute: '/idphoto',
-    },
-    {
-        id: 'voucher-corp',
-        categoryId: 'voucher',
-        nameKey: 'service.item.voucher_corp.name',
-        descriptionKey: 'service.item.voucher_corp.desc',
-        originalPrice: 'NT$ 3,600',
-        priceRange: 'NT$ 2,500+',
-        actionLabelKey: 'service.action.view',
         targetRoute: '/travel',
     },
 ];

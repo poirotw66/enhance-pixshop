@@ -18,6 +18,7 @@ import StartScreen from './components/StartScreen';
 import IdPhotoPage from './features/idphoto/IdPhotoPage';
 import PortraitPage from './features/portrait/PortraitPage';
 import TravelPage from './features/travel/TravelPage';
+import ThemedPage from './features/themed/ThemedPage';
 import PhotographyServicePage from './features/photography-service/PhotographyServicePage';
 import { dataURLtoFile } from './utils/fileUtils';
 import { useLanguage } from './contexts/LanguageContext';
@@ -503,6 +504,7 @@ const App: React.FC = () => {
           <Route path="/idphoto" element={<IdPhotoPage onImageSelected={handleImageUpload} />} />
           <Route path="/portrait" element={<PortraitPage onImageSelected={handleImageUpload} />} />
           <Route path="/travel" element={<TravelPage onImageSelected={handleImageUpload} />} />
+          <Route path="/themed" element={<ThemedPage onImageSelected={handleImageUpload} />} />
           <Route path="/photography-service" element={<PhotographyServicePage />} />
           <Route path="/edit" element={!currentImage ? <Navigate to="/" replace /> : renderEditor()} />
           <Route path="*" element={<Navigate to="/" replace />} />
