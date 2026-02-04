@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
 import StartTabNav from '../../components/StartTabNav';
-import Spinner from '../../components/Spinner';
+import ProgressIndicator from '../../components/ProgressIndicator';
 import { useThemed } from './useThemed';
 import ThemedForm from './ThemedForm';
 import ThemedUploadSection from './ThemedUploadSection';
@@ -49,10 +49,10 @@ const ThemedPage: React.FC<ThemedPageProps> = ({ onImageSelected }) => {
                         onEditInEditor={handleEditInEditor}
                     />
                 ) : themed.themedLoading ? (
-                    <div className="flex flex-col items-center gap-4 w-full max-w-md animate-fade-in bg-gray-800/40 p-8 rounded-xl border border-gray-700/50 backdrop-blur-sm">
-                        <Spinner />
-                        <p className="text-gray-300">{t('themed.generating')}</p>
-                    </div>
+                    <ProgressIndicator
+                        progress={themed.progress}
+                        statusMessages={['themed.generating']}
+                    />
                 ) : (
                     <>
                         <ThemedForm

@@ -8,6 +8,8 @@ import { useSearchParams } from 'react-router-dom';
 import { generateThemedPhoto } from '../../services/geminiService';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { normalizeApiError } from '../../services/gemini/shared';
+import { useHistory } from '../../hooks/useHistory';
 import { DEFAULT_THEMED_TYPE } from '../../constants/themed';
 import type { ThemedType } from '../../types';
 
@@ -15,6 +17,7 @@ export function useThemed() {
     const { t } = useLanguage();
     const settings = useSettings();
     const [searchParams] = useSearchParams();
+    const { addToHistory } = useHistory();
 
     const [themedFile, setThemedFile] = useState<File | null>(null);
     const [themedResult, setThemedResult] = useState<string | null>(null);
@@ -23,6 +26,7 @@ export function useThemed() {
     const [themedPreviewUrl, setThemedPreviewUrl] = useState<string | null>(null);
     const [themeType, setThemeType] = useState<ThemedType>(DEFAULT_THEMED_TYPE);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
+    const [progress, setProgress] = useState<number>(0);
 
     useEffect(() => {
         const typeParam = searchParams.get('type');
@@ -58,19 +62,38 @@ export function useThemed() {
         }
         setThemedError(null);
         setThemedLoading(true);
+        setProgress(0);
+
         try {
+            // Simulate progress
+            const progressInterval = setInterval(() => {
+                setProgress((prev) => {
+                    if (prev >= 90) return prev;
+                    return prev + Math.random() * 10;
+                });
+            }, 500);
+
             const url = await generateThemedPhoto(themedFile, {
                 themeType,
                 settings: { apiKey: settings.apiKey, model: settings.model },
             });
+
+            clearInterval(progressInterval);
+            setProgress(100);
             setThemedResult(url);
+
+            // Add to history
+            addToHistory('themed', url, { themeType });
         } catch (err) {
-            const msg = err instanceof Error ? err.message : 'An unknown error occurred.';
-            setThemedError(`Failed: ${msg}`);
+            const normalizedError = normalizeApiError(err, 'themed');
+            const errorKey = normalizedError.message || 'error.unknown';
+            setThemedError(t(errorKey));
+            console.error('Themed generation error:', normalizedError.originalError || err);
         } finally {
             setThemedLoading(false);
+            setProgress(0);
         }
-    }, [themedFile, themeType, settings.apiKey, settings.model, t]);
+    }, [themedFile, themeType, settings.apiKey, settings.model, t, addToHistory]);
 
     const handleThemedDownload = useCallback(() => {
         if (!themedResult) return;
@@ -112,6 +135,7 @@ export function useThemed() {
         themedPreviewUrl,
         themeType,
         setThemeType,
+        progress,
         handleThemedFileChange,
         handleThemedGenerate,
         handleThemedDownload,

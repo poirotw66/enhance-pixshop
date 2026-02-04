@@ -8,6 +8,8 @@ import { useSearchParams } from 'react-router-dom';
 import { generateIdPhoto } from '../../services/geminiService';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { normalizeApiError } from '../../services/gemini/shared';
+import { useHistory } from '../../hooks/useHistory';
 import {
   DEFAULT_ID_TYPE,
   DEFAULT_RETOUCH_LEVEL,
@@ -20,6 +22,7 @@ export function useIdPhoto() {
   const { t } = useLanguage();
   const settings = useSettings();
   const [searchParams] = useSearchParams();
+  const { addToHistory } = useHistory();
 
   const [idPhotoFile, setIdPhotoFile] = useState<File | null>(null);
   const [idPhotoResult, setIdPhotoResult] = useState<string | null>(null);
@@ -34,6 +37,7 @@ export function useIdPhoto() {
   const [idPhotoClothingReferenceFile, setIdPhotoClothingReferenceFile] = useState<File | null>(null);
   const [idPhotoClothingReferenceUrl, setIdPhotoClothingReferenceUrl] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {
     const levelParam = searchParams.get('level');
@@ -83,7 +87,17 @@ export function useIdPhoto() {
     }
     setIdPhotoError(null);
     setIdPhotoLoading(true);
+    setProgress(0);
+
     try {
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 10;
+        });
+      }, 500);
+
       const url = await generateIdPhoto(idPhotoFile, {
         retouchLevel: idPhotoRetouchLevel,
         idType: idPhotoType,
@@ -93,14 +107,28 @@ export function useIdPhoto() {
         clothingReferenceImage: idPhotoClothingOption === 'custom' && idPhotoClothingReferenceFile ? idPhotoClothingReferenceFile : undefined,
         settings: { apiKey: settings.apiKey, model: settings.model },
       });
+
+      clearInterval(progressInterval);
+      setProgress(100);
       setIdPhotoResult(url);
+
+      // Add to history
+      addToHistory('idphoto', url, {
+        retouchLevel: idPhotoRetouchLevel,
+        idType: idPhotoType,
+        outputSpec: idPhotoOutputSpec,
+        clothingOption: idPhotoClothingOption,
+      });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'An unknown error occurred.';
-      setIdPhotoError(`${t('start.error_idphoto_failed')} ${msg}`);
+      const normalizedError = normalizeApiError(err, 'idphoto');
+      const errorKey = normalizedError.message || 'error.unknown';
+      setIdPhotoError(t(errorKey));
+      console.error('ID photo generation error:', normalizedError.originalError || err);
     } finally {
       setIdPhotoLoading(false);
+      setProgress(0);
     }
-  }, [idPhotoFile, idPhotoRetouchLevel, idPhotoType, idPhotoOutputSpec, idPhotoClothingOption, idPhotoClothingCustomText, idPhotoClothingReferenceFile, settings.apiKey, settings.model, t]);
+  }, [idPhotoFile, idPhotoRetouchLevel, idPhotoType, idPhotoOutputSpec, idPhotoClothingOption, idPhotoClothingCustomText, idPhotoClothingReferenceFile, settings.apiKey, settings.model, t, addToHistory]);
 
   const handleIdPhotoDownload = useCallback(() => {
     if (!idPhotoResult) return;
@@ -155,6 +183,7 @@ export function useIdPhoto() {
     idPhotoClothingReferenceFile,
     setIdPhotoClothingReferenceFile,
     idPhotoClothingReferenceUrl,
+    progress,
     handleIdPhotoFileChange,
     handleIdPhotoGenerate,
     handleIdPhotoDownload,

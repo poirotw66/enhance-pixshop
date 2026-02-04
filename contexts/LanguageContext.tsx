@@ -711,6 +711,16 @@ const translations: Record<Language, Record<string, string>> = {
     "main.error_no_crop": "Please select an area to crop.",
     "main.error_failed_crop": "Could not process the crop.",
 
+    "error.api_key_missing": "API key not found. Please check your settings.",
+    "error.blocked": "Request was blocked. Please try again or modify your request.",
+    "error.safety_filter": "Content was filtered by safety settings. Please try a different approach.",
+    "error.no_image": "The AI model did not return an image. Please try again.",
+    "error.network_error": "Network error occurred. Please check your connection and try again.",
+    "error.quota_exceeded": "API quota exceeded. Please try again later.",
+    "error.invalid_request": "Invalid request. Please check your input and try again.",
+    "error.unknown": "An unknown error occurred. Please try again.",
+    "error.generation_failed": "Generation failed. Please try again.",
+
     "panel.adjust.title": "Apply a Professional Adjustment",
     "panel.adjust.blur": "Blur Background",
     "panel.adjust.details": "Enhance Details",
@@ -1446,6 +1456,16 @@ const translations: Record<Language, Record<string, string>> = {
     "main.error_failed_adjust": "應用調整失敗。",
     "main.error_no_crop": "請選擇裁切區域。",
     "main.error_failed_crop": "無法執行裁切。",
+
+    "error.api_key_missing": "找不到 API 金鑰。請檢查您的設定。",
+    "error.blocked": "請求被阻擋。請重試或修改您的請求。",
+    "error.safety_filter": "內容被安全設定過濾。請嘗試其他方式。",
+    "error.no_image": "AI 模型未返回圖片。請重試。",
+    "error.network_error": "發生網路錯誤。請檢查連線後重試。",
+    "error.quota_exceeded": "API 配額已用盡。請稍後再試。",
+    "error.invalid_request": "無效的請求。請檢查輸入後重試。",
+    "error.unknown": "發生未知錯誤。請重試。",
+    "error.generation_failed": "生成失敗。請重試。",
 
     "panel.adjust.title": "應用專業調整",
     "panel.adjust.blur": "模糊背景",

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
 import StartTabNav from '../../components/StartTabNav';
-import Spinner from '../../components/Spinner';
+import ProgressIndicator from '../../components/ProgressIndicator';
 import { useIdPhoto } from './useIdPhoto';
 import IdPhotoForm from './IdPhotoForm';
 import IdPhotoUploadSection from './IdPhotoUploadSection';
@@ -52,10 +52,10 @@ const IdPhotoPage: React.FC<IdPhotoPageProps> = ({ onImageSelected }) => {
             onEditInEditor={handleEditInEditor}
           />
         ) : id.idPhotoLoading ? (
-          <div className="flex flex-col items-center gap-4 w-full max-w-md animate-fade-in bg-gray-800/40 p-8 rounded-xl border border-gray-700/50 backdrop-blur-sm">
-            <Spinner />
-            <p className="text-gray-300">{t('start.idphoto_generating')}</p>
-          </div>
+          <ProgressIndicator
+            progress={id.progress}
+            statusMessages={['start.idphoto_generating']}
+          />
         ) : (
           <>
             <IdPhotoForm

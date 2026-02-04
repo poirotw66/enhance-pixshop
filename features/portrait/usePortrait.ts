@@ -8,6 +8,8 @@ import { useSearchParams } from 'react-router-dom';
 import { generateProfessionalPortrait } from '../../services/geminiService';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { normalizeApiError } from '../../services/gemini/shared';
+import { useHistory } from '../../hooks/useHistory';
 import {
     DEFAULT_PORTRAIT_TYPE,
     DEFAULT_PORTRAIT_SPEC,
@@ -18,6 +20,7 @@ export function usePortrait() {
     const { t } = useLanguage();
     const settings = useSettings();
     const [searchParams] = useSearchParams();
+    const { addToHistory } = useHistory();
 
     const [portraitFile, setPortraitFile] = useState<File | null>(null);
     const [portraitResult, setPortraitResult] = useState<string | null>(null);
@@ -27,6 +30,7 @@ export function usePortrait() {
     const [portraitType, setPortraitType] = useState<PortraitType>(DEFAULT_PORTRAIT_TYPE);
     const [portraitOutputSpec, setPortraitOutputSpec] = useState<OutputSpec>(DEFAULT_PORTRAIT_SPEC);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
+    const [progress, setProgress] = useState<number>(0);
 
     useEffect(() => {
         const typeParam = searchParams.get('type');
@@ -66,21 +70,42 @@ export function usePortrait() {
         }
         setPortraitError(null);
         setPortraitLoading(true);
+        setProgress(0);
+
         try {
-            // Assuming generateProfessionalPortrait will be implemented in geminiService
+            // Simulate progress
+            const progressInterval = setInterval(() => {
+                setProgress((prev) => {
+                    if (prev >= 90) return prev;
+                    return prev + Math.random() * 10;
+                });
+            }, 500);
+
             const url = await generateProfessionalPortrait(portraitFile, {
                 portraitType,
                 outputSpec: portraitOutputSpec,
                 settings: { apiKey: settings.apiKey, model: settings.model },
             });
+
+            clearInterval(progressInterval);
+            setProgress(100);
             setPortraitResult(url);
+
+            // Add to history
+            addToHistory('portrait', url, {
+                portraitType,
+                outputSpec: portraitOutputSpec,
+            });
         } catch (err) {
-            const msg = err instanceof Error ? err.message : 'An unknown error occurred.';
-            setPortraitError(`Failed: ${msg}`);
+            const normalizedError = normalizeApiError(err, 'portrait');
+            const errorKey = normalizedError.message || 'error.unknown';
+            setPortraitError(t(errorKey));
+            console.error('Portrait generation error:', normalizedError.originalError || err);
         } finally {
             setPortraitLoading(false);
+            setProgress(0);
         }
-    }, [portraitFile, portraitType, portraitOutputSpec, settings.apiKey, settings.model, t]);
+    }, [portraitFile, portraitType, portraitOutputSpec, settings.apiKey, settings.model, t, addToHistory]);
 
     const handlePortraitDownload = useCallback(() => {
         if (!portraitResult) return;
@@ -126,6 +151,7 @@ export function usePortrait() {
         setPortraitType,
         portraitOutputSpec,
         setPortraitOutputSpec,
+        progress,
         handlePortraitFileChange,
         handlePortraitGenerate,
         handlePortraitDownload,
