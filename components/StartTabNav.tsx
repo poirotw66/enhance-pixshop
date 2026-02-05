@@ -17,7 +17,7 @@ const StartTabNav: React.FC<StartTabNavProps> = ({ currentTab, navigate }) => {
   const { t } = useLanguage();
 
   return (
-    <div className="bg-gray-800/50 p-1 rounded-xl flex flex-wrap items-center justify-center gap-1 border border-gray-700 mt-4 mb-4">
+    <div className="bg-gray-900/40 p-1 rounded-xl flex flex-wrap items-center justify-center gap-1 border border-gray-700/60 shadow-inner">
       <button
         onClick={() => navigate('/photography-service')}
         className={`px-5 py-3 rounded-lg text-base md:text-lg font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${currentTab === 'photography-service'

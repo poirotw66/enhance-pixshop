@@ -24,14 +24,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         compressionThresholdMB,
         setCompressionThresholdMB,
     } = useSettings();
-    const { t } = useLanguage();
-    const { theme } = useTheme();
+    const { t, language, setLanguage } = useLanguage();
+    const { theme, setTheme } = useTheme();
 
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-            <div className={`rounded-xl p-6 w-full max-w-md shadow-2xl relative ${
+            <div className={`rounded-xl p-6 w-full max-w-md md:max-w-lg shadow-2xl relative max-h-[90vh] overflow-y-auto ${
                 theme === 'newyear'
                     ? 'bg-red-900/90 border border-red-700/50'
                     : theme === 'bloom'
@@ -58,6 +58,100 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 }`}>{t('settings.title')}</h2>
 
                 <div className="space-y-6">
+                    <div className={`border rounded-xl p-4 ${
+                        theme === 'newyear' ? 'border-red-700/60 bg-red-900/30' : theme === 'bloom' ? 'border-fuchsia-500/20 bg-gray-900/40' : 'border-gray-700 bg-gray-900/40'
+                    }`}>
+                        <label className={`block text-sm font-medium mb-3 ${
+                            theme === 'newyear' ? 'text-red-50' : theme === 'bloom' ? 'text-white' : 'text-white'
+                        }`}>
+                            {t('settings.theme')}
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {([
+                                { id: 'bloom', label: t('theme.bloom') },
+                                { id: 'night', label: t('theme.night') },
+                                { id: 'newyear', label: t('theme.newyear') }
+                            ] as const).map((option) => (
+                                <button
+                                    key={option.id}
+                                    onClick={() => setTheme(option.id)}
+                                    className={`w-full rounded-lg border px-3 py-2 text-left transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-black ${
+                                        option.id === theme
+                                            ? theme === 'newyear'
+                                                ? 'border-yellow-400/80 text-yellow-200 focus:ring-yellow-400'
+                                                : theme === 'bloom'
+                                                    ? 'border-fuchsia-400 text-white focus:ring-fuchsia-400'
+                                                    : 'border-cyan-400 text-white focus:ring-cyan-400'
+                                            : theme === 'newyear'
+                                                ? 'border-red-700/50 text-red-100 hover:border-yellow-300/60 hover:text-yellow-200'
+                                                : theme === 'bloom'
+                                                    ? 'border-gray-700 text-gray-200 hover:border-fuchsia-300/60 hover:text-white'
+                                                    : 'border-gray-700 text-gray-200 hover:border-cyan-300/60 hover:text-white'
+                                    } ${
+                                        option.id === 'night' ? 'bg-black/40' : 'bg-white/5'
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">{option.label}</span>
+                                        {option.id === theme && (
+                                            <span className={`text-xs uppercase tracking-wide ${
+                                                theme === 'newyear' ? 'text-yellow-300' : 'text-cyan-300'
+                                            }`}>
+                                                {t('common.selected')}
+                                            </span>
+                                        )}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className={`block text-sm font-medium mb-2 ${
+                            theme === 'newyear' ? 'text-red-200' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-300'
+                        }`}>
+                            {t('settings.language')}
+                        </label>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setLanguage('en')}
+                                className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-black ${
+                                    language === 'en'
+                                        ? theme === 'newyear'
+                                            ? 'border-yellow-400/80 text-yellow-200 focus:ring-yellow-400'
+                                            : theme === 'bloom'
+                                                ? 'border-fuchsia-400 text-white focus:ring-fuchsia-400'
+                                                : 'border-cyan-400 text-white focus:ring-cyan-400'
+                                        : theme === 'newyear'
+                                            ? 'border-red-700/50 text-red-100 hover:border-yellow-300/60 hover:text-yellow-200'
+                                            : theme === 'bloom'
+                                                ? 'border-gray-700 text-gray-200 hover:border-fuchsia-300/60 hover:text-white'
+                                                : 'border-gray-700 text-gray-200 hover:border-cyan-300/60 hover:text-white'
+                                }`}
+                            >
+                                {t('settings.language.en')}
+                            </button>
+                            <button
+                                onClick={() => setLanguage('zh-TW')}
+                                className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-black ${
+                                    language === 'zh-TW'
+                                        ? theme === 'newyear'
+                                            ? 'border-yellow-400/80 text-yellow-200 focus:ring-yellow-400'
+                                            : theme === 'bloom'
+                                                ? 'border-fuchsia-400 text-white focus:ring-fuchsia-400'
+                                                : 'border-cyan-400 text-white focus:ring-cyan-400'
+                                        : theme === 'newyear'
+                                            ? 'border-red-700/50 text-red-100 hover:border-yellow-300/60 hover:text-yellow-200'
+                                            : theme === 'bloom'
+                                                ? 'border-gray-700 text-gray-200 hover:border-fuchsia-300/60 hover:text-white'
+                                                : 'border-gray-700 text-gray-200 hover:border-cyan-300/60 hover:text-white'
+                                }`}
+                            >
+                                {t('settings.language.zh')}
+                            </button>
+                        </div>
+                    </div>
+
                     <div>
                         <label className={`block text-sm font-medium mb-2 ${
                             theme === 'newyear' ? 'text-red-200' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-300'

@@ -2,12 +2,13 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { CogIcon } from './icons';
 import SettingsModal from './SettingsModal';
+import StartTabNav, { type StartTab } from './StartTabNav';
 
 /** BloomRender logo for header (product branding) */
 const LogoIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -53,6 +54,20 @@ const Header: React.FC<HeaderProps> = ({ onImageSelected }) => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const currentTab: StartTab = useMemo(() => {
+    const path = location.pathname;
+    if (path.startsWith('/photography-service')) return 'photography-service';
+    if (path.startsWith('/generate')) return 'generate';
+    if (path.startsWith('/idphoto')) return 'idphoto';
+    if (path.startsWith('/portrait')) return 'portrait';
+    if (path.startsWith('/travel')) return 'travel';
+    if (path.startsWith('/themed')) return 'themed';
+    if (path.startsWith('/couple-group')) return 'couple-group';
+    return 'upload';
+  }, [location.pathname]);
 
   return (
     <>
@@ -63,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ onImageSelected }) => {
               ? 'border-fuchsia-500/20 bg-gray-800/50 shadow-fuchsia-500/5'
               : 'border-slate-600/40 bg-gray-800/50 shadow-slate-500/5'
         }`}>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4 flex-wrap md:flex-nowrap justify-between">
             <Link to="/" className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity duration-200">
                 <span className="flex shrink-0 w-9 h-9 rounded-xl overflow-hidden bg-white/5 ring-1 ring-white/10">
                   <LogoIcon className="w-full h-full object-contain" />
@@ -82,49 +97,11 @@ const Header: React.FC<HeaderProps> = ({ onImageSelected }) => {
                 </div>
             </Link>
 
-            <div className="flex items-center gap-2">
-                <span className="flex rounded-lg border border-gray-600/80 bg-gray-900/40 p-0.5" role="group" aria-label="Theme">
-                  <button
-                    onClick={() => setTheme('bloom')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                      theme === 'bloom'
-                        ? 'bg-fuchsia-500/30 text-fuchsia-200 shadow-inner focus:ring-fuchsia-500'
-                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 focus:ring-fuchsia-500'
-                    }`}
-                    aria-label={t('theme.bloom')}
-                    aria-pressed={theme === 'bloom'}
-                  >
-                    <BloomIcon className="w-4 h-4" />
-                    {t('theme.bloom')}
-                  </button>
-                  <button
-                    onClick={() => setTheme('night')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                      theme === 'night'
-                        ? 'bg-slate-500/30 text-slate-200 shadow-inner focus:ring-blue-500'
-                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 focus:ring-blue-500'
-                    }`}
-                    aria-label={t('theme.night')}
-                    aria-pressed={theme === 'night'}
-                  >
-                    <MoonIcon className="w-4 h-4" />
-                    {t('theme.night')}
-                  </button>
-                  <button
-                    onClick={() => setTheme('newyear')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                      theme === 'newyear'
-                        ? 'bg-red-500/30 text-red-200 shadow-inner focus:ring-red-500'
-                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 focus:ring-red-500'
-                    }`}
-                    aria-label={t('theme.newyear')}
-                    aria-pressed={theme === 'newyear'}
-                  >
-                    <FirecrackerIcon className="w-4 h-4" />
-                    {t('theme.newyear')}
-                  </button>
-                </span>
+            <div className="flex-1 min-w-[260px] flex justify-center">
+              <StartTabNav currentTab={currentTab} navigate={navigate} />
+            </div>
 
+            <div className="flex items-center gap-2">
                 <button
                     onClick={() => setIsSettingsOpen(true)}
                     className={`p-2 rounded-lg transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 hover:bg-white/10 ${
@@ -137,19 +114,6 @@ const Header: React.FC<HeaderProps> = ({ onImageSelected }) => {
                     aria-label="Settings"
                 >
                     <CogIcon className="w-5 h-5" />
-                </button>
-
-                <button
-                    onClick={() => setLanguage(language === 'en' ? 'zh-TW' : 'en')}
-                    className={`text-sm font-medium transition-colors duration-200 bg-white/10 px-3 py-1.5 rounded-md border border-white/10 hover:bg-white/20 hover:border-white/20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                      theme === 'newyear'
-                        ? 'text-red-200 hover:text-red-50 focus:ring-red-500'
-                        : theme === 'bloom'
-                          ? 'text-gray-300 hover:text-white focus:ring-fuchsia-500'
-                          : 'text-slate-300 hover:text-white focus:ring-blue-500'
-                    }`}
-                >
-                    {language === 'en' ? '中文' : 'English'}
                 </button>
             </div>
         </div>
