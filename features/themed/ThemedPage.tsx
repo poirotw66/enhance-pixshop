@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useTheme } from '../../contexts/ThemeContext';
-import StartTabNav from '../../components/StartTabNav';
 import ProgressIndicator from '../../components/ProgressIndicator';
 import { useThemed } from './useThemed';
 import ThemedForm from './ThemedForm';
@@ -40,19 +39,17 @@ const ThemedPage: React.FC<ThemedPageProps> = ({ onImageSelected }) => {
         <div className={`w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 shadow-xl backdrop-blur-xl ${surface}`}>
             <div className="flex flex-col items-center gap-6 animate-fade-in">
                 <h1 className="text-5xl font-extrabold tracking-tight text-gray-100 sm:text-6xl md:text-7xl">
-                    {t('start.title_part1')} <span className={`${
+                    <span className={`${
                         theme === 'newyear'
-                            ? 'text-red-400'
+                            ? 'text-red-200'
                             : theme === 'bloom'
-                                ? 'text-fuchsia-400'
-                                : 'text-purple-400'
-                    }`}>{t('start.title_part2')}</span>.
+                                ? 'text-fuchsia-200'
+                                : 'text-purple-200'
+                    }`}>{t('themed.title')}</span>
                 </h1>
-                <p className="max-w-2xl text-lg text-gray-400 md:text-xl">
-                    {t('start.subtitle')}
+                <p className="max-w-3xl text-lg text-gray-300 md:text-xl">
+                    {t('themed.subtitle')}
                 </p>
-
-                <StartTabNav currentTab="themed" navigate={navigate} />
 
                 {themed.themedResults && themed.themedResults.length > 0 ? (
                     <div className="w-full flex flex-col gap-6">

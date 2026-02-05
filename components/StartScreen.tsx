@@ -8,7 +8,6 @@ import { UploadIcon, MagicWandIcon, PaletteIcon, SunIcon, BullseyeIcon } from '.
 import { generateImageFromText } from '../services/geminiService';
 import { dataURLtoFile } from '../utils/fileUtils';
 import BloomFlowerLoader from './BloomFlowerLoader';
-import StartTabNav from './StartTabNav';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -147,8 +146,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ tab, onImageSelected, navigat
         <p className="max-w-2xl text-lg text-gray-200 md:text-xl">
           {t('start.subtitle')}
         </p>
-
-        <StartTabNav currentTab={tab} navigate={navigate} />
 
         {tab === 'upload' ? (
             <div className="flex flex-col items-center gap-4 w-full animate-fade-in">

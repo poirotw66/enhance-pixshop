@@ -6,7 +6,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
-import StartTabNav from '../../components/StartTabNav';
 import { PHOTOGRAPHY_SERVICE_CATEGORIES, PHOTOGRAPHY_SERVICE_ITEMS } from '../../constants/photographyService';
 import ServiceCard from './ServiceCard';
 import { PhotographyServiceItem } from './types';
@@ -39,8 +38,6 @@ const PhotographyServicePage: React.FC = () => {
                     {t('service.subtitle')}
                 </p>
             </div>
-
-            <StartTabNav currentTab="photography-service" navigate={navigate} />
 
             {/* Category Tabs */}
             <div className="w-full flex flex-wrap justify-center gap-2 mb-4">

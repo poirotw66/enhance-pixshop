@@ -9,7 +9,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
-import StartTabNav from '../../components/StartTabNav';
 import ProgressIndicator from '../../components/ProgressIndicator';
 import CoupleGroupModeTabs from './CoupleGroupModeTabs';
 import CoupleGroupStyleSelector from './CoupleGroupStyleSelector';
@@ -36,8 +35,6 @@ const CoupleGroupPage: React.FC<CoupleGroupPageProps> = ({ onImageSelected }) =>
         <p className="max-w-2xl text-lg text-gray-400 md:text-xl">
           {t('couple_group.subtitle')}
         </p>
-
-        <StartTabNav currentTab="couple-group" navigate={navigate} />
 
         <CoupleGroupModeTabs mode={coupleGroup.mode} onChange={coupleGroup.setMode} />
 

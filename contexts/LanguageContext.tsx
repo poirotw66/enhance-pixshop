@@ -43,11 +43,22 @@ const translations: Record<Language, Record<string, string>> = {
     "start.error_no_prompt": "Please enter a description for the image.",
     "start.error_gen_failed": "Failed to generate image.",
 
+    "idphoto.title": "ID Photo Studio",
+    "idphoto.subtitle": "Instant pro-ready ID photos with correct sizing, attire, and retouch presets.",
+
+    "portrait.title": "Portrait Retouch",
+    "portrait.subtitle": "Upload a portrait, set the output spec, and get polished, ready-to-use shots.",
+
+    "themed.title": "Themed Photoshoot",
+    "themed.subtitle": "Pick a theme and generate styled photos with outfits, poses, and mood presets.",
+
     "start.tab_idphoto": "ID Photo",
     "start.tab_travel": "Travel Photo",
     "start.tab_themed": "Themed Photoshoot",
     "start.tab_couple_group": "Couple / Group",
     "start.tab_service": "Photography Service",
+
+    "travel.subtitle": "Choose a scene or map view, then generate travel photos tailored to your vibe.",
 
     "service.title_part1": "Photography",
     "service.title_part2": "Studio",
@@ -858,10 +869,21 @@ const translations: Record<Language, Record<string, string>> = {
     "start.error_no_prompt": "請輸入圖片描述。",
     "start.error_gen_failed": "生成圖片失敗。",
 
+    "idphoto.title": "證件照工作室",
+    "idphoto.subtitle": "一鍵生成專業證件照，尺寸、服裝與美化一次完成。",
+
+    "portrait.title": "人像精修",
+    "portrait.subtitle": "上傳人像，設定輸出規格，即可獲得精修、可直接使用的照片。",
+
+    "themed.title": "主題寫真",
+    "themed.subtitle": "選擇主題，生成具備服裝、姿勢與氛圍設定的風格照片。",
+
     "start.tab_idphoto": "證件照",
     "start.tab_travel": "旅遊照",
     "start.tab_themed": "主題寫真",
     "start.tab_service": "照片館",
+
+    "travel.subtitle": "從地圖或場景清單挑選，生成符合風格的旅遊照片。",
 
     "service.title_part1": "專業",
     "service.title_part2": "照片館",

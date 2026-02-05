@@ -11,7 +11,6 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useBatchProcessing } from '../../hooks/useBatchProcessing';
 import { generateIdPhoto } from '../../services/geminiService';
-import StartTabNav from '../../components/StartTabNav';
 import BatchUploadSection from '../../components/BatchUploadSection';
 import BatchProgress from '../../components/BatchProgress';
 import {
@@ -159,8 +158,6 @@ const IdPhotoBatchPage: React.FC<IdPhotoBatchPageProps> = ({ onImageSelected }) 
         <p className="max-w-2xl text-lg text-gray-400 md:text-xl">
           {t('batch.upload_hint', { min: 1, max: 10 })}
         </p>
-
-        <StartTabNav currentTab="idphoto" navigate={navigate} />
 
         {batch.isProcessing ? (
           <BatchProgress
