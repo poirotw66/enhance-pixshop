@@ -11,6 +11,9 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     "app.title": "BloomRender",
     "app.slogan": "Let your ideas bloom.",
+    "theme.bloom": "Bloom",
+    "theme.night": "Night",
+    "theme.newyear": "New Year",
     "common.none": "None",
     "common.output_quantity": "Output Quantity",
 
@@ -818,6 +821,9 @@ const translations: Record<Language, Record<string, string>> = {
   'zh-TW': {
     "app.title": "BloomRender",
     "app.slogan": "讓創意綻放。",
+    "theme.bloom": "繁花",
+    "theme.night": "深夜",
+    "theme.newyear": "新年",
     "common.none": "無",
     "common.output_quantity": "產出數量",
 

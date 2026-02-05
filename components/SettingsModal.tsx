@@ -6,6 +6,7 @@
 import React from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -24,32 +25,55 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         setCompressionThresholdMB,
     } = useSettings();
     const { t } = useLanguage();
+    const { theme } = useTheme();
 
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-full max-w-md shadow-2xl relative">
+            <div className={`rounded-xl p-6 w-full max-w-md shadow-2xl relative ${
+                theme === 'newyear'
+                    ? 'bg-red-900/90 border border-red-700/50'
+                    : theme === 'bloom'
+                        ? 'bg-gray-800 border border-fuchsia-500/30'
+                        : 'bg-gray-800 border border-gray-700'
+            }`}>
                 <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                    className={`absolute top-4 right-4 transition-colors ${
+                        theme === 'newyear'
+                            ? 'text-red-400 hover:text-red-100'
+                            : theme === 'bloom'
+                                ? 'text-gray-400 hover:text-white'
+                                : 'text-gray-400 hover:text-white'
+                    }`}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
 
-                <h2 className="text-xl font-bold text-white mb-6">{t('settings.title')}</h2>
+                <h2 className={`text-xl font-bold mb-6 ${
+                    theme === 'newyear' ? 'text-red-50' : theme === 'bloom' ? 'text-white' : 'text-white'
+                }`}>{t('settings.title')}</h2>
 
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                            theme === 'newyear' ? 'text-red-200' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-300'
+                        }`}>
                             {t('settings.model')}
                         </label>
                         <select
                             value={model}
                             onChange={(e) => setModel(e.target.value as any)}
-                            className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            className={`w-full border rounded-lg p-3 focus:ring-2 focus:outline-none ${
+                                theme === 'newyear'
+                                    ? 'bg-red-900/50 border-red-700/50 text-red-50 focus:ring-red-500'
+                                    : theme === 'bloom'
+                                        ? 'bg-gray-900 border-gray-600 text-white focus:ring-fuchsia-500'
+                                        : 'bg-gray-900 border-gray-600 text-white focus:ring-blue-500'
+                            }`}
                         >
                             <option value="gemini-2.5-flash-image">{t('settings.model.flash')}</option>
                             <option value="gemini-3-pro-image-preview">{t('settings.model.pro')}</option>
@@ -57,7 +81,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                            theme === 'newyear' ? 'text-red-200' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-300'
+                        }`}>
                             {t('settings.api_key')}
                         </label>
                         <input
@@ -65,15 +91,27 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             value={apiKey}
                             onChange={(e) => setApiKey(e.target.value)}
                             placeholder={t('settings.api_key_placeholder')}
-                            className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-gray-500"
+                            className={`w-full border rounded-lg p-3 focus:ring-2 focus:outline-none ${
+                                theme === 'newyear'
+                                    ? 'bg-red-900/50 border-red-700/50 text-red-50 placeholder-red-300 focus:ring-red-500'
+                                    : theme === 'bloom'
+                                        ? 'bg-gray-900 border-gray-600 text-white placeholder-gray-500 focus:ring-fuchsia-500'
+                                        : 'bg-gray-900 border-gray-600 text-white placeholder-gray-500 focus:ring-blue-500'
+                            }`}
                         />
-                        <p className="text-xs text-gray-500 mt-2">
+                        <p className={`text-xs mt-2 ${
+                            theme === 'newyear' ? 'text-red-300' : theme === 'bloom' ? 'text-gray-500' : 'text-gray-500'
+                        }`}>
                             {t('settings.api_key_desc')}
                         </p>
                     </div>
 
-                    <div className="border-t border-gray-700 pt-6">
-                        <h3 className="text-lg font-semibold text-white mb-4">
+                    <div className={`border-t pt-6 ${
+                        theme === 'newyear' ? 'border-red-700/50' : theme === 'bloom' ? 'border-gray-700' : 'border-gray-700'
+                    }`}>
+                        <h3 className={`text-lg font-semibold mb-4 ${
+                            theme === 'newyear' ? 'text-red-50' : theme === 'bloom' ? 'text-white' : 'text-white'
+                        }`}>
                             {t('settings.compression')}
                         </h3>
                         
@@ -84,16 +122,26 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                     id="enable-compression"
                                     checked={enableImageCompression}
                                     onChange={(e) => setEnableImageCompression(e.target.checked)}
-                                    className="mt-1 w-4 h-4 text-blue-600 bg-gray-900 border-gray-600 rounded focus:ring-blue-500"
+                                    className={`mt-1 w-4 h-4 rounded focus:ring-2 ${
+                                        theme === 'newyear'
+                                            ? 'text-red-600 bg-red-900/50 border-red-700 focus:ring-red-500'
+                                            : theme === 'bloom'
+                                                ? 'text-blue-600 bg-gray-900 border-gray-600 focus:ring-fuchsia-500'
+                                                : 'text-blue-600 bg-gray-900 border-gray-600 focus:ring-blue-500'
+                                    }`}
                                 />
                                 <div className="flex-1">
                                     <label 
                                         htmlFor="enable-compression"
-                                        className="block text-sm font-medium text-gray-300 mb-1"
+                                        className={`block text-sm font-medium mb-1 ${
+                                            theme === 'newyear' ? 'text-red-200' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-300'
+                                        }`}
                                     >
                                         {t('settings.compression.enable')}
                                     </label>
-                                    <p className="text-xs text-gray-500">
+                                    <p className={`text-xs ${
+                                        theme === 'newyear' ? 'text-red-300' : theme === 'bloom' ? 'text-gray-500' : 'text-gray-500'
+                                    }`}>
                                         {t('settings.compression.enable_desc')}
                                     </p>
                                 </div>
@@ -101,7 +149,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
                             {enableImageCompression && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    <label className={`block text-sm font-medium mb-2 ${
+                                        theme === 'newyear' ? 'text-red-200' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-300'
+                                    }`}>
                                         {t('settings.compression.threshold')}
                                     </label>
                                     <input
@@ -116,9 +166,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                                 setCompressionThresholdMB(value);
                                             }
                                         }}
-                                        className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        className={`w-full border rounded-lg p-3 focus:ring-2 focus:outline-none ${
+                                            theme === 'newyear'
+                                                ? 'bg-red-900/50 border-red-700/50 text-red-50 focus:ring-red-500'
+                                                : theme === 'bloom'
+                                                    ? 'bg-gray-900 border-gray-600 text-white focus:ring-fuchsia-500'
+                                                    : 'bg-gray-900 border-gray-600 text-white focus:ring-blue-500'
+                                        }`}
                                     />
-                                    <p className="text-xs text-gray-500 mt-2">
+                                    <p className={`text-xs mt-2 ${
+                                        theme === 'newyear' ? 'text-red-300' : theme === 'bloom' ? 'text-gray-500' : 'text-gray-500'
+                                    }`}>
                                         {t('settings.compression.threshold_desc')}
                                     </p>
                                 </div>
@@ -130,13 +188,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 <div className="mt-8 flex justify-end gap-3">
                      <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors font-medium"
+                        className={`px-4 py-2 rounded-lg transition-colors font-medium ${
+                            theme === 'newyear'
+                                ? 'bg-red-800/50 hover:bg-red-700/50 text-red-100'
+                                : theme === 'bloom'
+                                    ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                                    : 'bg-gray-700 hover:bg-gray-600 text-white'
+                        }`}
                     >
                         {t('settings.cancel')}
                     </button>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors font-medium"
+                        className={`px-4 py-2 rounded-lg transition-colors font-medium ${
+                            theme === 'newyear'
+                                ? 'bg-red-600 hover:bg-red-500 text-white'
+                                : theme === 'bloom'
+                                    ? 'bg-fuchsia-600 hover:bg-fuchsia-500 text-white'
+                                    : 'bg-blue-600 hover:bg-blue-500 text-white'
+                        }`}
                     >
                         {t('settings.save')}
                     </button>

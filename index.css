@@ -1,3 +1,26 @@
+/* BloomRender: ensure sufficient text contrast on dark bloom background */
+#root .text-muted-contrast { color: rgb(203 213 225); }
+#root input::placeholder,
+#root textarea::placeholder { color: rgb(148 163 184); }
+
+/* BloomRender design tokens (logo-aligned gradient) */
+.bg-bloom-gradient {
+  background: linear-gradient(135deg, rgb(249 115 22 / 0.9) 0%, rgb(236 72 153 / 0.9) 35%, rgb(168 85 247 / 0.9) 65%, rgb(59 130 246 / 0.9) 100%);
+}
+.text-bloom-gradient {
+  background: linear-gradient(135deg, #f97316, #ec4899, #a855f7, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.border-bloom {
+  border-image: linear-gradient(135deg, rgba(249,115,22,0.5), rgba(236,72,153,0.5), rgba(168,85,247,0.5), rgba(59,130,246,0.5)) 1;
+}
+.ring-bloom:focus-within,
+.ring-bloom:focus {
+  --tw-ring-color: rgba(168, 85, 247, 0.5);
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

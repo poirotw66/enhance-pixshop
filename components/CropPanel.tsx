@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CropPanelProps {
   onApplyCrop: () => void;
@@ -17,6 +18,7 @@ type AspectRatio = 'free' | '1:1' | '16:9' | 'id_2in_head' | 'id_2in_half' | 'id
 
 const CropPanel: React.FC<CropPanelProps> = ({ onApplyCrop, onSetAspect, isLoading, isCropping }) => {
   const { t } = useLanguage();
+  const { theme } = useTheme();
   const [activeAspect, setActiveAspect] = useState<AspectRatio>('free');
   
   const handleAspectChange = (aspect: AspectRatio, value: number | undefined) => {
@@ -34,22 +36,42 @@ const CropPanel: React.FC<CropPanelProps> = ({ onApplyCrop, onSetAspect, isLoadi
   ];
 
   return (
-    <div className="w-full bg-gray-800/50 border border-gray-700 rounded-lg p-4 flex flex-col items-center gap-4 animate-fade-in backdrop-blur-sm">
-      <h3 className="text-lg font-semibold text-gray-300">{t('panel.crop.title')}</h3>
-      <p className="text-sm text-gray-400 -mt-2">{t('panel.crop.instr')}</p>
+    <div className={`w-full rounded-lg p-4 flex flex-col items-center gap-4 animate-fade-in backdrop-blur-sm ${
+      theme === 'newyear'
+        ? 'bg-red-900/30 border border-red-700/50'
+        : theme === 'bloom'
+          ? 'bg-gray-800/50 border border-fuchsia-500/20'
+          : 'bg-gray-800/50 border border-gray-700'
+    }`}>
+      <h3 className={`text-lg font-semibold ${
+        theme === 'newyear' ? 'text-red-200' : theme === 'bloom' ? 'text-gray-200' : 'text-gray-300'
+      }`}>{t('panel.crop.title')}</h3>
+      <p className={`text-sm -mt-2 ${
+        theme === 'newyear' ? 'text-red-300' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-400'
+      }`}>{t('panel.crop.instr')}</p>
       
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm font-medium text-gray-400">{t('panel.crop.aspect')}</span>
+        <span className={`text-sm font-medium ${
+          theme === 'newyear' ? 'text-red-300' : theme === 'bloom' ? 'text-gray-300' : 'text-gray-400'
+        }`}>{t('panel.crop.aspect')}</span>
         {aspects.map(({ name, value, label, title }) => (
           <button
             key={name}
             onClick={() => handleAspectChange(name, value)}
             disabled={isLoading}
             title={title}
-            className={`px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200 active:scale-95 disabled:opacity-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-              activeAspect === name 
-              ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-md shadow-blue-500/20' 
-              : 'bg-white/10 hover:bg-white/20 text-gray-200'
+            className={`px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200 active:scale-95 disabled:opacity-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+              activeAspect === name
+                ? theme === 'newyear'
+                  ? 'bg-gradient-to-br from-red-600 to-red-500 text-white shadow-md shadow-red-500/20 focus:ring-red-500'
+                  : theme === 'bloom'
+                    ? 'bg-gradient-to-br from-fuchsia-600 to-pink-500 text-white shadow-md shadow-fuchsia-500/20 focus:ring-fuchsia-500'
+                    : 'bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-md shadow-blue-500/20 focus:ring-blue-500'
+                : theme === 'newyear'
+                  ? 'bg-white/10 hover:bg-white/20 text-red-200 focus:ring-red-500'
+                  : theme === 'bloom'
+                    ? 'bg-white/10 hover:bg-white/20 text-gray-200 focus:ring-fuchsia-500'
+                    : 'bg-white/10 hover:bg-white/20 text-gray-200 focus:ring-blue-500'
             } disabled:cursor-not-allowed`}
           >
             {label}

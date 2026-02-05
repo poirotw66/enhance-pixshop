@@ -7,6 +7,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import StartTabNav from '../../components/StartTabNav';
 import ProgressIndicator from '../../components/ProgressIndicator';
 import { usePortrait } from './usePortrait';
@@ -21,6 +22,7 @@ interface PortraitPageProps {
 
 const PortraitPage: React.FC<PortraitPageProps> = ({ onImageSelected }) => {
     const { t } = useLanguage();
+    const { theme } = useTheme();
     const navigate = useNavigate();
     const portrait = usePortrait();
 
@@ -33,7 +35,13 @@ const PortraitPage: React.FC<PortraitPageProps> = ({ onImageSelected }) => {
         <div className="w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 border-transparent">
             <div className="flex flex-col items-center gap-6 animate-fade-in">
                 <h1 className="text-5xl font-extrabold tracking-tight text-gray-100 sm:text-6xl md:text-7xl">
-                    {t('start.title_part1')} <span className="text-blue-400">{t('start.title_part2')}</span>.
+                    {t('start.title_part1')} <span className={`${
+                        theme === 'newyear'
+                            ? 'text-red-400'
+                            : theme === 'bloom'
+                                ? 'text-fuchsia-400'
+                                : 'text-blue-400'
+                    }`}>{t('start.title_part2')}</span>.
                 </h1>
                 <p className="max-w-2xl text-lg text-gray-400 md:text-xl">
                     {t('start.subtitle')}

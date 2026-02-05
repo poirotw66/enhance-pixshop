@@ -5,7 +5,7 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
-export type ThemeType = 'default' | 'newyear';
+export type ThemeType = 'bloom' | 'night' | 'newyear';
 
 interface ThemeColors {
   // Primary colors
@@ -52,12 +52,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const STORAGE_KEY_THEME = 'pixshop_theme';
 
-const defaultColors: ThemeColors = {
-  primary: 'blue',
-  primaryHover: 'blue-500',
-  primaryLight: 'blue-400',
-  primaryDark: 'blue-600',
-  bgMain: '#090A0F',
+/** 繁花 (Bloom): warm fuchsia/pink gradients, flower petals */
+const bloomColors: ThemeColors = {
+  primary: 'fuchsia',
+  primaryHover: 'fuchsia-500',
+  primaryLight: 'fuchsia-400',
+  primaryDark: 'fuchsia-600',
+  bgMain: '#0c0a0f',
   bgCard: 'gray-800',
   bgCardHover: 'white/10',
   bgOverlay: 'black/20',
@@ -66,14 +67,39 @@ const defaultColors: ThemeColors = {
   textMuted: 'gray-400',
   border: 'gray-700',
   borderHover: 'gray-600',
+  accent: 'pink-400',
+  accentHover: 'pink-500',
+  success: 'green',
+  successHover: 'green-500',
+  bgGradient1: 'rgba(236, 72, 153, 0.25)',
+  bgGradient2: 'rgba(168, 85, 247, 0.2)',
+  bgGradient3: 'rgba(217, 70, 239, 0.22)',
+  bgGradient4: '#1B2735',
+};
+
+/** 深夜 (Night): dark blue/slate, minimal, star-focused */
+const nightColors: ThemeColors = {
+  primary: 'blue',
+  primaryHover: 'blue-500',
+  primaryLight: 'blue-400',
+  primaryDark: 'blue-600',
+  bgMain: '#000000',
+  bgCard: 'gray-800',
+  bgCardHover: 'white/10',
+  bgOverlay: 'black/20',
+  textPrimary: 'gray-50',
+  textSecondary: 'gray-200',
+  textMuted: 'gray-300',
+  border: 'gray-700',
+  borderHover: 'gray-600',
   accent: 'cyan-400',
   accentHover: 'cyan-500',
   success: 'green',
   successHover: 'green-500',
-  bgGradient1: 'rgba(150, 50, 100, 0.25)',
-  bgGradient2: 'rgba(80, 150, 120, 0.2)',
-  bgGradient3: 'rgba(50, 80, 150, 0.3)',
-  bgGradient4: '#1B2735',
+  bgGradient1: 'transparent',
+  bgGradient2: 'transparent',
+  bgGradient3: 'transparent',
+  bgGradient4: '#000000',
 };
 
 const newyearColors: ThemeColors = {
@@ -101,17 +127,21 @@ const newyearColors: ThemeColors = {
 };
 
 const themeColorMap: Record<ThemeType, ThemeColors> = {
-  default: defaultColors,
+  bloom: bloomColors,
+  night: nightColors,
   newyear: newyearColors,
 };
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<ThemeType>('default');
+  const [theme, setThemeState] = useState<ThemeType>('bloom');
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem(STORAGE_KEY_THEME);
-    if (storedTheme && (storedTheme === 'default' || storedTheme === 'newyear')) {
-      setThemeState(storedTheme as ThemeType);
+    const stored = localStorage.getItem(STORAGE_KEY_THEME);
+    if (stored === 'bloom' || stored === 'night' || stored === 'newyear') {
+      setThemeState(stored);
+    } else if (stored === 'default') {
+      setThemeState('bloom');
+      localStorage.setItem(STORAGE_KEY_THEME, 'bloom');
     }
   }, []);
 
