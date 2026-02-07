@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { dataURLtoFile } from '../../utils/fileUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ProgressIndicator from '../../components/ProgressIndicator';
@@ -16,6 +15,7 @@ import CoupleGroupUploadSection from './CoupleGroupUploadSection';
 import CoupleGroupResult from './CoupleGroupResult';
 import { useCoupleGroup } from './useCoupleGroup';
 import QuantitySelector from '../../components/QuantitySelector';
+import OutputSizeRatioSelector from '../../components/OutputSizeRatioSelector';
 
 interface CoupleGroupPageProps {
   onImageSelected: (file: File) => void;
@@ -23,38 +23,42 @@ interface CoupleGroupPageProps {
 
 const CoupleGroupPage: React.FC<CoupleGroupPageProps> = ({ onImageSelected }) => {
   const { t } = useLanguage();
-  const navigate = useNavigate();
   const coupleGroup = useCoupleGroup();
+  const resultCount = coupleGroup.results?.length ?? 0;
+  const hasMultipleResults = resultCount > 1;
 
   return (
-    <div className="w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 border-transparent">
-      <div className="flex flex-col items-center gap-6 animate-fade-in">
-        <h1 className="text-5xl font-extrabold tracking-tight text-gray-100 sm:text-6xl md:text-7xl">
-          {t('couple_group.title_part1')} <span className="text-pink-400">{t('couple_group.title_part2')}</span>
-        </h1>
-        <p className="max-w-2xl text-lg text-gray-400 md:text-xl">
-          {t('couple_group.subtitle')}
-        </p>
-
-        <CoupleGroupModeTabs mode={coupleGroup.mode} onChange={coupleGroup.setMode} />
+    <div className="w-full max-w-5xl mx-auto text-center px-4 py-6 sm:p-8 transition-all duration-300 rounded-2xl border-2 border-transparent">
+      <div className="flex flex-col items-center gap-8 animate-fade-in">
+        <header className="flex flex-col items-center gap-3">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-100 sm:text-5xl md:text-6xl">
+            {t('couple_group.title_part1')} <span className="text-pink-400">{t('couple_group.title_part2')}</span>
+          </h1>
+          <p className="max-w-2xl text-base text-gray-400 md:text-lg">
+            {t('couple_group.subtitle')}
+          </p>
+          <CoupleGroupModeTabs mode={coupleGroup.mode} onChange={coupleGroup.setMode} />
+        </header>
 
         {coupleGroup.results && coupleGroup.results.length > 0 ? (
-          <div className="w-full flex flex-col gap-6">
-            <div className="flex items-center justify-center gap-4">
-              <button
-                onClick={coupleGroup.handleBatchDownload}
-                className="px-6 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-colors"
-              >
-                💾 {t('history.batch_download')} ({coupleGroup.results.length})
-              </button>
+          <section className="w-full flex flex-col gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {hasMultipleResults && (
+                <button
+                  onClick={coupleGroup.handleBatchDownload}
+                  className="px-5 py-2.5 bg-green-600 text-white rounded-xl font-bold hover:bg-green-500 transition-colors text-sm shadow-lg shadow-green-600/20"
+                >
+                  💾 {t('history.batch_download')} ({resultCount})
+                </button>
+              )}
               <button
                 onClick={coupleGroup.clearResult}
-                className="px-6 py-3 bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-600 transition-colors"
+                className="px-5 py-2.5 bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-600 transition-colors text-sm border border-gray-600"
               >
                 {t('couple_group.again')}
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
               {coupleGroup.results.map((result, idx) => (
                 <CoupleGroupResult
                   key={idx}
@@ -76,7 +80,7 @@ const CoupleGroupPage: React.FC<CoupleGroupPageProps> = ({ onImageSelected }) =>
                 />
               ))}
             </div>
-          </div>
+          </section>
         ) : coupleGroup.result ? (
           <CoupleGroupResult
             result={coupleGroup.result}
@@ -103,20 +107,25 @@ const CoupleGroupPage: React.FC<CoupleGroupPageProps> = ({ onImageSelected }) =>
             statusMessages={['couple_group.generating']}
           />
         ) : (
-          <>
+          <div className="w-full max-w-2xl mx-auto bg-gray-800/30 border border-gray-700/50 rounded-2xl p-6 md:p-8 flex flex-col gap-6">
             <CoupleGroupStyleSelector
               mode={coupleGroup.mode}
               style={coupleGroup.style}
               onChange={coupleGroup.setStyle}
               disabled={coupleGroup.loading}
             />
-            <div className="w-full max-w-md mx-auto">
-              <QuantitySelector
-                quantity={coupleGroup.quantity}
-                onChange={coupleGroup.setQuantity}
-                disabled={coupleGroup.loading}
-              />
-            </div>
+            <QuantitySelector
+              quantity={coupleGroup.quantity}
+              onChange={coupleGroup.setQuantity}
+              disabled={coupleGroup.loading}
+            />
+            <OutputSizeRatioSelector
+              outputSize={coupleGroup.outputSize}
+              aspectRatio={coupleGroup.aspectRatio}
+              onOutputSizeChange={coupleGroup.setOutputSize}
+              onAspectRatioChange={coupleGroup.setAspectRatio}
+              disabled={coupleGroup.loading}
+            />
             <CoupleGroupUploadSection
               mode={coupleGroup.mode}
               files={coupleGroup.files}
@@ -131,7 +140,7 @@ const CoupleGroupPage: React.FC<CoupleGroupPageProps> = ({ onImageSelected }) =>
               onDragLeave={coupleGroup.handleDragLeave}
               onDrop={coupleGroup.handleDrop}
             />
-          </>
+          </div>
         )}
       </div>
     </div>

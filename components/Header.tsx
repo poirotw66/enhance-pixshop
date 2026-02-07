@@ -66,6 +66,7 @@ const Header: React.FC<HeaderProps> = ({ onImageSelected }) => {
     if (path.startsWith('/travel')) return 'travel';
     if (path.startsWith('/themed')) return 'themed';
     if (path.startsWith('/couple-group')) return 'couple-group';
+    if (path.startsWith('/try-on')) return 'tryon';
     return 'upload';
   }, [location.pathname]);
 

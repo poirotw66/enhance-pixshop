@@ -28,8 +28,8 @@ const CoupleGroupStyleSelector: React.FC<CoupleGroupStyleSelectorProps> = ({
   const styles = mode === 'couple' ? COUPLE_STYLES : GROUP_STYLES;
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto mb-6">
-      <label className="block text-sm font-medium text-gray-400 text-center">
+    <div className="flex flex-col gap-3 w-full">
+      <label className="block text-sm font-bold text-gray-400 uppercase tracking-wider">
         {mode === 'couple' ? t('couple_group.label.style') : t('couple_group.label.group_style')}
       </label>
       <div className="flex flex-wrap justify-center gap-2">

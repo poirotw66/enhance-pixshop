@@ -14,6 +14,7 @@ import ThemedForm from './ThemedForm';
 import ThemedUploadSection from './ThemedUploadSection';
 import ThemedResult from './ThemedResult';
 import QuantitySelector from '../../components/QuantitySelector';
+import OutputSizeRatioSelector from '../../components/OutputSizeRatioSelector';
 
 interface ThemedPageProps {
     onImageSelected: (file: File) => void;
@@ -35,39 +36,46 @@ const ThemedPage: React.FC<ThemedPageProps> = ({ onImageSelected }) => {
         onImageSelected(dataURLtoFile(result, `themed-${index !== undefined ? index + 1 : Date.now()}.png`));
     };
 
+    const resultCount = themed.themedResults?.length ?? 0;
+    const hasMultipleResults = resultCount > 1;
+
     return (
-        <div className={`w-full max-w-5xl mx-auto text-center p-8 transition-all duration-300 rounded-2xl border-2 shadow-xl backdrop-blur-xl ${surface}`}>
-            <div className="flex flex-col items-center gap-6 animate-fade-in">
-                <h1 className="text-5xl font-extrabold tracking-tight text-gray-100 sm:text-6xl md:text-7xl">
-                    <span className={`${
-                        theme === 'newyear'
-                            ? 'text-red-200'
-                            : theme === 'bloom'
-                                ? 'text-fuchsia-200'
-                                : 'text-purple-200'
-                    }`}>{t('themed.title')}</span>
-                </h1>
-                <p className="max-w-3xl text-lg text-gray-300 md:text-xl">
-                    {t('themed.subtitle')}
-                </p>
+        <div className={`w-full max-w-5xl mx-auto text-center px-4 py-6 sm:p-8 transition-all duration-300 rounded-2xl border-2 shadow-xl backdrop-blur-xl ${surface}`}>
+            <div className="flex flex-col items-center gap-8 animate-fade-in">
+                <header className="flex flex-col items-center gap-3">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-gray-100 sm:text-5xl md:text-6xl">
+                        <span className={`${
+                            theme === 'newyear'
+                                ? 'text-red-200'
+                                : theme === 'bloom'
+                                    ? 'text-fuchsia-200'
+                                    : 'text-purple-200'
+                        }`}>{t('themed.title')}</span>
+                    </h1>
+                    <p className="max-w-2xl text-base text-gray-400 md:text-lg">
+                        {t('themed.subtitle')}
+                    </p>
+                </header>
 
                 {themed.themedResults && themed.themedResults.length > 0 ? (
-                    <div className="w-full flex flex-col gap-6">
-                        <div className="flex items-center justify-center gap-4">
-                            <button
-                                onClick={themed.handleThemedBatchDownload}
-                                className="px-6 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-colors"
-                            >
-                                💾 {t('history.batch_download')} ({themed.themedResults.length})
-                            </button>
+                    <section className="w-full flex flex-col gap-6">
+                        <div className="flex flex-wrap items-center justify-center gap-3">
+                            {hasMultipleResults && (
+                                <button
+                                    onClick={themed.handleThemedBatchDownload}
+                                    className="px-5 py-2.5 bg-green-600 text-white rounded-xl font-bold hover:bg-green-500 transition-colors text-sm shadow-lg shadow-green-600/20"
+                                >
+                                    💾 {t('history.batch_download')} ({resultCount})
+                                </button>
+                            )}
                             <button
                                 onClick={themed.clearThemedResult}
-                                className="px-6 py-3 bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-600 transition-colors"
+                                className="px-5 py-2.5 bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-600 transition-colors text-sm border border-gray-600"
                             >
-                                {t('start.idphoto_again')}
+                                {t('couple_group.again')}
                             </button>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
                             {themed.themedResults.map((result, idx) => (
                                 <ThemedResult
                                     key={idx}
@@ -84,7 +92,7 @@ const ThemedPage: React.FC<ThemedPageProps> = ({ onImageSelected }) => {
                                 />
                             ))}
                         </div>
-                    </div>
+                    </section>
                 ) : themed.themedResult ? (
                     <ThemedResult
                         themedResult={themed.themedResult}
@@ -99,19 +107,24 @@ const ThemedPage: React.FC<ThemedPageProps> = ({ onImageSelected }) => {
                         statusMessages={['themed.generating']}
                     />
                 ) : (
-                    <>
+                    <div className="w-full max-w-2xl mx-auto bg-gray-800/30 border border-gray-700/50 rounded-2xl p-6 md:p-8 flex flex-col gap-6">
                         <ThemedForm
                             themeType={themed.themeType}
                             setThemeType={themed.setThemeType}
                             disabled={themed.themedLoading}
                         />
-                        <div className="w-full max-w-md mx-auto">
-                            <QuantitySelector
-                                quantity={themed.quantity}
-                                onChange={themed.setQuantity}
-                                disabled={themed.themedLoading}
-                            />
-                        </div>
+                        <QuantitySelector
+                            quantity={themed.quantity}
+                            onChange={themed.setQuantity}
+                            disabled={themed.themedLoading}
+                        />
+                        <OutputSizeRatioSelector
+                            outputSize={themed.outputSize}
+                            aspectRatio={themed.aspectRatio}
+                            onOutputSizeChange={themed.setOutputSize}
+                            onAspectRatioChange={themed.setAspectRatio}
+                            disabled={themed.themedLoading}
+                        />
                         <ThemedUploadSection
                             themedFile={themed.themedFile}
                             themedPreviewUrl={themed.themedPreviewUrl}
@@ -124,7 +137,7 @@ const ThemedPage: React.FC<ThemedPageProps> = ({ onImageSelected }) => {
                             onDragLeave={themed.handleDragLeave}
                             onDrop={themed.handleDrop}
                         />
-                    </>
+                    </div>
                 )}
             </div>
         </div>

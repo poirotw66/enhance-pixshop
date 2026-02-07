@@ -28,11 +28,11 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   const quantities = Array.from({ length: max - min + 1 }, (_, i) => min + i);
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-gray-300">
+    <div className="flex flex-col gap-3 w-full max-w-md mx-auto">
+      <label className="text-sm font-bold text-gray-400 uppercase tracking-wider">
         {t('common.output_quantity')}
       </label>
-      <div className="flex gap-2">
+      <div className="flex justify-center gap-2">
         {quantities.map((qty) => (
           <button
             key={qty}

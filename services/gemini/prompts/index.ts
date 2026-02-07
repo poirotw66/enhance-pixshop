@@ -12,3 +12,4 @@ export * from './portrait';
 export * from './themed';
 export * from './travel';
 export * from './coupleGroup';
+export * from './tryOn';

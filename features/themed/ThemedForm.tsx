@@ -22,9 +22,9 @@ const ThemedForm: React.FC<ThemedFormProps> = ({
     const { t } = useLanguage();
 
     return (
-        <div className="flex flex-col gap-4 w-full max-w-2xl animate-fade-in bg-gray-800/40 p-6 rounded-xl border border-gray-700/50 backdrop-blur-sm">
+        <div className="flex flex-col gap-4 w-full animate-fade-in">
             <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">{t('themed.label.type')}</label>
+                <label className="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">{t('themed.label.type')}</label>
                 <select
                     value={themeType}
                     onChange={(e) => setThemeType(e.target.value as ThemedType)}
@@ -35,8 +35,8 @@ const ThemedForm: React.FC<ThemedFormProps> = ({
                         <option key={type.id} value={type.id}>{t(type.nameKey)}</option>
                     ))}
                 </select>
+                <p className="text-xs text-gray-500 mt-2">{t('idphoto.model_recommendation')}</p>
             </div>
-            <p className="text-xs text-gray-500 mt-2">{t('idphoto.model_recommendation')}</p>
         </div>
     );
 };

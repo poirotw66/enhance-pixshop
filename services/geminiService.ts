@@ -15,11 +15,13 @@ export {
   generateTravelPhoto,
   generateImageFromText,
   generateOptimizedPrompt,
+  generateVirtualTryOn,
   type ServiceSettings,
   type GenerateIdPhotoOptions,
   type GeneratePortraitOptions,
   type GenerateThemedPhotoOptions,
   type GenerateTravelPhotoOptions,
+  type GenerateTryOnOptions,
 } from './gemini';
 
 export type {

@@ -29,6 +29,8 @@ export function useThemed() {
     const [isDraggingOver, setIsDraggingOver] = useState(false);
     const [progress, setProgress] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
+    const [outputSize, setOutputSize] = useState<'1K' | '2K' | '4K'>('1K');
+    const [aspectRatio, setAspectRatio] = useState<'1:1' | '16:9' | '9:16'>('16:9');
 
     useEffect(() => {
         const typeParam = searchParams.get('type');
@@ -83,7 +85,9 @@ export function useThemed() {
                 generateThemedPhoto(themedFile, {
                     themeType,
                     settings: { apiKey: settings.apiKey, model: settings.model },
-                    variationIndex: i, // Use index to create different variations
+                    variationIndex: i,
+                    outputSize,
+                    aspectRatio,
                 })
                     .then((url) => {
                         // Add to history
@@ -122,7 +126,7 @@ export function useThemed() {
             setThemedLoading(false);
             setProgress(0);
         }
-    }, [themedFile, themeType, settings.apiKey, settings.model, t, addToHistory, quantity]);
+    }, [themedFile, themeType, settings.apiKey, settings.model, t, addToHistory, quantity, outputSize, aspectRatio]);
 
     const handleThemedDownload = useCallback(() => {
         if (!themedResult) return;
@@ -198,6 +202,10 @@ export function useThemed() {
         progress,
         quantity,
         setQuantity,
+        outputSize,
+        setOutputSize,
+        aspectRatio,
+        setAspectRatio,
         handleThemedFileChange,
         handleThemedGenerate,
         handleThemedDownload,

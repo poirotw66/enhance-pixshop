@@ -21,6 +21,7 @@ import TravelPage from './features/travel/TravelPage';
 import ThemedPage from './features/themed/ThemedPage';
 import PhotographyServicePage from './features/photography-service/PhotographyServicePage';
 import CoupleGroupPage from './features/couple-group/CoupleGroupPage';
+import TryOnPage from './features/tryon/TryOnPage';
 import { dataURLtoFile } from './utils/fileUtils';
 import { useLanguage } from './contexts/LanguageContext';
 import { useSettings } from './contexts/SettingsContext';
@@ -520,6 +521,7 @@ const App: React.FC = () => {
           <Route path="/travel" element={<TravelPage onImageSelected={handleImageUpload} />} />
           <Route path="/themed" element={<ThemedPage onImageSelected={handleImageUpload} />} />
           <Route path="/couple-group" element={<CoupleGroupPage onImageSelected={handleImageUpload} />} />
+          <Route path="/try-on" element={<TryOnPage onImageSelected={handleImageUpload} />} />
           <Route path="/photography-service" element={<PhotographyServicePage />} />
           <Route path="/edit" element={!currentImage ? <Navigate to="/" replace /> : renderEditor()} />
           <Route path="*" element={<Navigate to="/" replace />} />

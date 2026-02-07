@@ -145,6 +145,23 @@ export const TRAVEL_VISUAL_STYLES = [
 ];
 
 /**
+ * Try-on / outfit style variations (fashion catalog style)
+ */
+export const TRYON_POSE_VARIATIONS = [
+  'model standing upright, full body visible, facing camera with slight turn, confident stance',
+  'model standing at a slight angle, one hand on hip, full outfit clearly visible, fashion pose',
+  'model in a relaxed standing pose, arms naturally at sides, showcasing the full outfit',
+  'model in a three-quarter view, natural walking or standing pose, outfit displayed clearly',
+];
+
+export const TRYON_BACKGROUND_VARIATIONS = [
+  'clean, neutral studio background, soft even lighting, minimal backdrop',
+  'plain light-colored wall or seamless backdrop, professional fashion photography',
+  'soft gradient or neutral tone background, no clutter, focus on the outfit',
+  'minimal studio setting, soft shadows, professional catalog style',
+];
+
+/**
  * Build variation note for multiple image generation
  */
 export interface VariationNote {

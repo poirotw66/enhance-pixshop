@@ -43,6 +43,8 @@ export function useCoupleGroup() {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [progress, setProgress] = useState<number>(0);
+  const [outputSize, setOutputSize] = useState<'1K' | '2K' | '4K'>('1K');
+  const [aspectRatio, setAspectRatio] = useState<'1:1' | '16:9' | '9:16'>('16:9');
 
   // Read URL parameters on mount
   useEffect(() => {
@@ -220,13 +222,19 @@ export function useCoupleGroup() {
         fileParts.push(await fileToPartAuto(file));
       }
 
-      console.log('Starting couple/group photo generation', { mode, style, fileCount });
       const ai = getClient(settings);
       const model = getModel(settings);
+      const isGemini3 = model === 'gemini-3-pro-image-preview';
+      const effectiveSize: '1K' | '2K' | '4K' = isGemini3 ? outputSize : '1K';
+      const imageConfig: { aspectRatio: string; imageSize?: '1K' | '2K' | '4K' } = {
+        aspectRatio,
+      };
+      if (isGemini3) imageConfig.imageSize = effectiveSize;
+
+      console.log('Starting couple/group photo generation', { mode, style, fileCount, outputSize: effectiveSize, aspectRatio });
 
       // Generate all images in parallel with variations
       const generationPromises = Array.from({ length: quantity }, async (_, i) => {
-        // Create unique prompt for each variation
         const variedPrompt = createPrompt(i);
         const parts: Array<
           { inlineData?: { mimeType: string; data: string } } | { text: string }
@@ -238,6 +246,7 @@ export function useCoupleGroup() {
             contents: { parts },
             config: {
               responseModalities: ['TEXT', 'IMAGE'],
+              imageConfig,
             },
           });
           return handleApiResponse(response, mode === 'couple' ? 'couple' : 'group');
@@ -271,7 +280,7 @@ export function useCoupleGroup() {
       setLoading(false);
       setProgress(0);
     }
-  }, [mode, files, style, settings, t, quantity]);
+  }, [mode, files, style, settings, t, quantity, outputSize, aspectRatio]);
 
   // Clear result
   const clearResult = useCallback(() => {
@@ -325,6 +334,10 @@ export function useCoupleGroup() {
     isDraggingOver,
     quantity,
     setQuantity,
+    outputSize,
+    setOutputSize,
+    aspectRatio,
+    setAspectRatio,
     handleFileChange,
     removeFile,
     handleGenerate,
